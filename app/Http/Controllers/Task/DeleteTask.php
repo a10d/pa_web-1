@@ -4,16 +4,23 @@ namespace App\Http\Controllers\Task;
 
 use App\Foundation\Http\Controller;
 use App\Models\Task;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Throwable;
 
 class DeleteTask extends Controller
 {
-    public function __invoke(Task $task)
+    /**
+     * @throws Throwable
+     */
+    public function __invoke(Task $task): JsonResponse
     {
         $this->authorize('delete', $task);
 
-        $task->delete();
+        $task->deleteOrFail();
 
-        return response(null, Response::HTTP_ACCEPTED);
+        return response()->json([
+            'message' => 'Task deleted successfully',
+        ]);
     }
 }

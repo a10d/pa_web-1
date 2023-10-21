@@ -12,7 +12,7 @@ class TaskTypePolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -20,7 +20,7 @@ class TaskTypePolicy
      */
     public function view(User $user, TaskType $taskType): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -28,7 +28,7 @@ class TaskTypePolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->isAdmin();
     }
 
     /**
@@ -36,7 +36,7 @@ class TaskTypePolicy
      */
     public function update(User $user, TaskType $taskType): bool
     {
-        //
+        return $user->isAdmin();
     }
 
     /**
@@ -44,22 +44,6 @@ class TaskTypePolicy
      */
     public function delete(User $user, TaskType $taskType): bool
     {
-        //
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, TaskType $taskType): bool
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, TaskType $taskType): bool
-    {
-        //
+        return $user->isAdmin();
     }
 }

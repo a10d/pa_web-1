@@ -17,7 +17,10 @@ class TaskTypeFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->colorName,
+            'description' => $this->faker->paragraph,
+            'color' => $this->faker->hexColor,
+            'reminderTime' => $this->faker->numberBetween(1, 60),
         ];
     }
 }
