@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @property int $id
+ * @property array $assignees
+ * @property TaskType $type
+ */
 class Task extends Model
 {
     use HasFactory;
@@ -31,7 +36,17 @@ class Task extends Model
         'completedAt' => 'datetime',
     ];
 
-    public function assignees(): BelongsToMany
+    protected function getAssigneesAttribute(): array
+    {
+        return $this->taskAssignees->pluck('id')->toArray();
+    }
+
+    protected function setAssigneesAttribute(array $assignees): void
+    {
+        $this->taskAssignees()->sync($assignees);
+    }
+
+    public function taskAssignees(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'task_assignees', 'task_id', 'user_id');
     }
@@ -51,7 +66,7 @@ class Task extends Model
         return $this->taskType;
     }
 
-    protected function setTypeAttribute($value)
+    protected function setTypeAttribute($value): void
     {
         $this->taskType()->associate($value);
     }

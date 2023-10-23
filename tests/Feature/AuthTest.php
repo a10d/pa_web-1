@@ -2,19 +2,38 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
-    {
-        $response = $this->get('/');
+    use RefreshDatabase;
 
-        $response->assertStatus(200);
+    public function test_a_user_can_log_in()
+    {
+        $credentials = [
+            'username' => 'test',
+            'password' => 'test',
+        ];
+
+        User::factory()->create($credentials);
+
+        $this->assertFalse(Auth::check());
+
+        $this->post('/api/auth/login', $credentials)->assertOk();
+
+        $this->assertTrue(Auth::check());
+    }
+
+    public function test_a_user_can_list_other_users()
+    {
+        User::factory()->count(10)->create();
+
+        $this
+            ->actingAs(User::factory()->create())
+            ->get('/api/auth/users')
+            ->assertJsonCount(11, 'users');
     }
 }
