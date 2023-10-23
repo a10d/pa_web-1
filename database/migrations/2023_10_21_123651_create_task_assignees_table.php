@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('task_assignees', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('task_id')->constrained('tasks');
             $table->foreignId('user_id')->constrained('users');
             $table->unique(['task_id', 'user_id']);

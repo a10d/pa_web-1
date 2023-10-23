@@ -37,6 +37,7 @@ class TaskTest extends TestCase
             'title' => 'Test Task',
             'description' => 'Test Task Description',
             'dueDate' => now()->addDay()->format('Y-m-d H:i:s'),
+            'assignees' => [User::factory()->create()->id]
         ];
 
         $this
@@ -46,7 +47,7 @@ class TaskTest extends TestCase
 
         $this->assertDatabaseHas('tasks', [
             'task_type_id' => $data['type'],
-            ...Arr::except($data, ['type'])
+            ...Arr::except($data, ['type', 'assignees'])
         ]);
     }
 
@@ -84,5 +85,56 @@ class TaskTest extends TestCase
         $this->assertDatabaseMissing('tasks', [
             'id' => $task->id,
         ]);
+    }
+
+    public function test_the_assignees_of_a_task_can_be_changed()
+    {
+
+        $task = Task::factory()->create();
+
+        $this->assertEmpty($task->assignees);
+
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+
+        $this
+            ->actingAs(User::factory()->create())
+            ->patch('/api/tasks/update/' . $task->id, [
+                ...Arr::only($task->toArray(), ['title', 'description', 'dueDate', 'completed']),
+                'assignees' => [$user1->id, $user2->id],
+            ])
+            ->assertOk();
+
+        $task->refresh();
+
+        $this->assertCount(2, $task->assignees);
+        $this->assertContains($user1->id, $task->assignees);
+        $this->assertContains($user2->id, $task->assignees);
+    }
+
+    public function test_an_assignee_of_a_task_can_be_removed()
+    {
+        $task = Task::factory()->create();
+
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+
+        $task->assignees = [$user1->id, $user2->id];
+
+        $this->assertCount(2, $task->assignees);
+
+        $this
+            ->actingAs(User::factory()->create())
+            ->patch('/api/tasks/update/' . $task->id, [
+                ...Arr::only($task->toArray(), ['title', 'description', 'dueDate', 'completed']),
+                'assignees' => [$user1->id],
+            ])
+            ->assertOk();
+
+        $task->refresh();
+
+        $this->assertCount(1, $task->assignees);
+        $this->assertContains($user1->id, $task->assignees);
+        $this->assertNotContains($user2->id, $task->assignees);
     }
 }

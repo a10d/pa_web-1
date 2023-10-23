@@ -15,7 +15,7 @@ class AllUsers extends Controller
         return response()->json([
             'users' => User::all()->map(fn(User $user) => [
                 'id' => $user->id,
-                'username' => $user->username,
+                'name' => $user->name,
             ]),
         ]);
     }

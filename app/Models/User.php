@@ -24,6 +24,7 @@ class User extends Authenticatable
     protected $fillable = [
         'username',
         'password',
+        'name',
     ];
 
     /**
@@ -48,5 +49,10 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->username === 'admin';
+    }
+
+    protected function getNameAttribute(): string
+    {
+        return $this->attributes['name'] ?? $this->username;
     }
 }

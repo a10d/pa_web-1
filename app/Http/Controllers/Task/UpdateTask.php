@@ -15,9 +15,9 @@ class UpdateTask extends Controller
      */
     public function __invoke(Task $task, UpdateTaskRequest $request): JsonResponse
     {
-        $task->fill($request->validated());
-
-        $task->saveOrFail();
+        $task
+            ->fill($request->validated())
+            ->saveOrFail();
 
         return response()->json([
             'message' => 'Task updated successfully',
