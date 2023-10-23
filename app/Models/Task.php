@@ -22,13 +22,14 @@ class Task extends Model
     ];
 
     protected $appends = [
-        'completed'
+        'completed',
+        'type',
     ];
 
-    public function type(): BelongsTo
-    {
-        return $this->belongsTo(TaskType::class, 'task_type_id');
-    }
+    protected $casts = [
+        'dueDate' => 'datetime',
+        'completedAt' => 'datetime',
+    ];
 
     public function assignees(): BelongsToMany
     {
@@ -43,5 +44,20 @@ class Task extends Model
     protected function setCompletedAttribute(bool $completed): void
     {
         $this->attributes['completedAt'] = $completed ? ($this->attributes['completedAt'] ?? now()) : null;
+    }
+
+    protected function getTypeAttribute(): TaskType
+    {
+        return $this->taskType;
+    }
+
+    protected function setTypeAttribute($value)
+    {
+        $this->taskType()->associate($value);
+    }
+
+    public function taskType(): BelongsTo
+    {
+        return $this->belongsTo(TaskType::class, 'task_type_id');
     }
 }

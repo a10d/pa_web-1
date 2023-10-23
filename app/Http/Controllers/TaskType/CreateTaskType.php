@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\TaskType;
 
-use app\Http\Requests\TaskType\CreateTaskType as CreateTaskTypeRequest;
+use App\Http\Requests\TaskType\CreateTaskType as CreateTaskTypeRequest;
 use App\Models\TaskType;
 use Illuminate\Http\JsonResponse;
 

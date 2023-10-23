@@ -31,13 +31,13 @@ Route::prefix('auth')->group(function () {
 Route::prefix('tasks')->group(function () {
     Route::get('all', AllTasks::class);
     Route::post('create', CreateTask::class);
-    Route::put('update/{id}', UpdateTask::class);
-    Route::delete('delete/{id}', DeleteTask::class);
+    Route::patch('update/{task}', UpdateTask::class);
+    Route::delete('delete/{task}', DeleteTask::class);
 });
 
-Route::prefix('taskType')->group(function () {
+Route::prefix('taskTypes')->group(function () {
     Route::get('all', AllTaskTypes::class);
     Route::post('create', CreateTaskType::class);
-    Route::put('update/{id}', UpdateTaskType::class);
-    Route::delete('delete/{id}', DeleteTaskType::class);
+    Route::patch('update/{taskType}', UpdateTaskType::class);
+    Route::delete('delete/{taskType}', DeleteTaskType::class);
 });

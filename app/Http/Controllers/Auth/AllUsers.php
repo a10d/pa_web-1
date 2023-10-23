@@ -10,7 +10,7 @@ class AllUsers extends Controller
 {
     public function __invoke(): JsonResponse
     {
-        $this->middleware('auth:sanctum');
+        $this->middleware('auth');
 
         return response()->json([
             'users' => User::all()->map(fn(User $user) => [

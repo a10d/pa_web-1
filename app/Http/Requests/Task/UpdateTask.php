@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Http\Requests\Task;
+namespace App\Http\Requests\Task;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -14,7 +14,7 @@ class UpdateTask extends FormRequest
     public function authorize(): bool
     {
         return Auth::check()
-            && Auth::user()->can('update', [$this->task()]);
+            && Auth::user()->can('update', [$this->route('task')]);
     }
 
     /**
@@ -27,7 +27,7 @@ class UpdateTask extends FormRequest
         return [
             'title' => ['string', 'required'],
 
-            'assignees' => ['array', 'required'],
+            'assignees' => ['array', 'nullable'],
             'assignees.*' => ['integer', 'exists:users,id'],
 
             'description' => ['string', 'required'],

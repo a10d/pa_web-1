@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Http\Requests\Task;
+namespace App\Http\Requests\Task;
 
 use App\Models\Task;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -27,6 +27,8 @@ class CreateTask extends FormRequest
     {
         return [
             'title' => ['string', 'required'],
+
+            'type' => ['integer', 'required', 'exists:task_types,id'],
 
             'assignees' => ['array', 'nullable'],
             'assignees.*' => ['integer', 'exists:users,id'],

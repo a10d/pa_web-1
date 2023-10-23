@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Http\Requests\TaskType;
+namespace App\Http\Requests\TaskType;
 
 use App\Models\TaskType;
 use Illuminate\Contracts\Validation\ValidationRule;
