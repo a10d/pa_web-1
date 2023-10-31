@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 
 import AppLayout from "../components/layouts/AppLayout.vue";
 import TaskCreateForm from "../components/task/TaskCreateForm.vue";

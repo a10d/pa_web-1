@@ -1,6 +1,6 @@
-import { defineStore } from "pinia";
-import { Task, TaskType, useBackend } from "../backend";
-import { useAuthStore } from "./auth";
+import {defineStore} from "pinia";
+import {Task, TaskType, useBackend} from "../backend";
+import {useAuthStore} from "./auth";
 
 
 type TaskStoreState = {
@@ -16,7 +16,7 @@ export const useTaskStore = defineStore("task", {
     actions: {
         async initialize() {
             // Cannot continue if not authenticated
-            if ( ! useAuthStore().isAuthenticated ) {
+            if (!useAuthStore().isAuthenticated) {
                 return;
             }
 

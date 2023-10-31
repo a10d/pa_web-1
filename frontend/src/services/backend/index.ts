@@ -1,5 +1,3 @@
-import axios, { AxiosInstance } from "axios";
-
 export type User = {
     id: number;
     name: string;
@@ -31,14 +29,9 @@ type LoginResponse = {
 
 class Connector {
 
-    private http: AxiosInstance;
 
     async initialize() {
-        this.http = axios.create({
-            withCredentials: true,
-        });
 
-        await this.http.get("/sanctum/csrf-cookie");
     }
 
     /**
@@ -46,7 +39,6 @@ class Connector {
      */
     async login(credentials: { username: string, password: string }): Promise<LoginResponse> {
         try {
-            const result = await this.http.post("/api/auth/login", credentials);
 
             return {
                 success: result.status === 200,
@@ -60,44 +52,44 @@ class Connector {
     }
 
     async fetchUser() {
-        return this.http.get("/api/auth/me");
+        return //this.http.get("/api/auth/me");
     }
 
     async fetchUsers() {
-        return this.http.get("/api/auth/users");
+        return //this.http.get("/api/auth/users");
     }
 
 
     async fetchTasks() {
-        return this.http.get("/api/tasks/all");
+        return //this.http.get("/api/tasks/all");
     }
 
     async createTask() {
-        return this.http.post("/api/tasks/create");
+        return //this.http.post("/api/tasks/create");
     }
 
     async updateTask(task: Task) {
-        return this.http.patch(`/api/tasks/update/${ task.id }`);
+        return //this.http.patch(`/api/tasks/update/${ task.id }`);
     }
 
     async deleteTask(task: Task) {
-        return this.http.delete(`/api/tasks/update/${ task.id }`);
+        return //this.http.delete(`/api/tasks/update/${ task.id }`);
     }
 
     async fetchTaskTypes() {
-        return this.http.get("/api/taskTypes/all");
+        return //this.http.get("/api/taskTypes/all");
     }
 
     async createTaskType() {
-        return this.http.post("/api/taskTypes/create");
+        return //this.http.post("/api/taskTypes/create");
     }
 
     async updateTaskType(taskType: TaskType) {
-        return this.http.patch(`/api/taskTypes/update/${ taskType.id }`);
+        return //this.http.patch(`/api/taskTypes/update/${ taskType.id }`);
     }
 
     async deleteTaskType(taskType: TaskType) {
-        return this.http.delete(`/api/tasks/update/${ taskType.id }`);
+        return //this.http.delete(`/api/tasks/update/${ taskType.id }`);
     }
 
 

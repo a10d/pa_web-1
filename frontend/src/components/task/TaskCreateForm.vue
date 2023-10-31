@@ -1,6 +1,6 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 
-import { computed, nextTick, reactive, ref } from "vue";
+import {computed, nextTick, reactive, ref} from "vue";
 import FormField from "../ui/FormField.vue";
 import PopButton from "../ui/PopButton.vue";
 
@@ -41,8 +41,8 @@ async function submitForm() {
 
     <!--  Action bar -->
     <input
-        class="transition-all sticky top-6 bg-white focus:shadow-lg border rounded-lg w-full p-4 focus:ring outline-0"
-        :placeholder="taskCTA" @focus="openActionBar"
+        :placeholder="taskCTA"
+        class="transition-all sticky top-6 bg-white focus:shadow-lg border rounded-lg w-full p-4 focus:ring outline-0" @focus="openActionBar"
     />
 
     <div v-if="formVisible" class="fixed inset-0 bg-white/80 backdrop-blur-lg" @click="cancel"/>
@@ -57,30 +57,30 @@ async function submitForm() {
 
                 <fieldset>
                     <FormField
-                        name="title"
-                        label="Titel"
                         v-model="taskForm.title"
                         :placeholder="taskCTA"
+                        label="Titel"
+                        name="title"
                         required
                     />
 
                     <FormField
-                        name="description"
-                        label="Beschreibung"
                         v-model="taskForm.description"
-                        type="textarea"
+                        label="Beschreibung"
+                        name="description"
                         placeholder="Beschreibe die Aufgabe etwas genauer..."
+                        type="textarea"
                     />
 
                     <div class="flex justify-between gap-4">
                         <PopButton
-                            label="Abbrechen"
                             color="gray"
+                            label="Abbrechen"
                             @click="cancel"
                         />
                         <PopButton
-                            label="Sichern"
                             color="green"
+                            label="Sichern"
                             @click="submitForm"
                         />
                     </div>

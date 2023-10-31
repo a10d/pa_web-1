@@ -1,5 +1,5 @@
-import { createPinia } from "pinia";
-import { useAuthStore } from "./auth";
+import {createPinia} from "pinia";
+import {useAuthStore} from "./auth";
 
 
 export const pinia = createPinia();

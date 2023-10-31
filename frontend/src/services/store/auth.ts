@@ -1,5 +1,5 @@
-import { defineStore } from "pinia";
-import { useBackend, User } from "../backend";
+import {defineStore} from "pinia";
+import {useBackend, User} from "../backend";
 
 type AuthStoreState = {
     user: User | null;
@@ -15,7 +15,7 @@ export const useAuthStore = defineStore("auth", {
     }),
     getters: {
         isAuthenticated(): boolean {
-            return !! this.user;
+            return !!this.user;
         },
     },
     actions: {
@@ -42,10 +42,10 @@ export const useAuthStore = defineStore("auth", {
 
             return this.isAuthenticated;
         },
-        async login({ username, password }) {
+        async login({username, password}) {
             const backend = useBackend();
-            const { success } = await backend.login({ username, password });
-            if ( success ) {
+            const {success} = await backend.login({username, password});
+            if (success) {
                 await Promise.all([
                     this.fetchUser(),
                     this.fetchUsers(),
