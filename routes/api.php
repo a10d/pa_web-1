@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AllUsers;
 use App\Http\Controllers\Auth\Login;
+use App\Http\Controllers\Auth\Me;
 use App\Http\Controllers\Task\AllTasks;
 use App\Http\Controllers\Task\CreateTask;
 use App\Http\Controllers\Task\DeleteTask;
@@ -24,6 +25,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('auth')->group(function () {
+    Route::get('me', Me::class);
     Route::post('login', Login::class);
     Route::get('users', AllUsers::class);
 });

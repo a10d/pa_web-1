@@ -8,10 +8,10 @@ use Illuminate\Http\JsonResponse;
 
 class AllUsers extends Controller
 {
+    protected $middleware = ['auth'];
+
     public function __invoke(): JsonResponse
     {
-        $this->middleware('auth');
-
         return response()->json([
             'users' => User::all()->map(fn(User $user) => [
                 'id' => $user->id,

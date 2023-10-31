@@ -12,16 +12,15 @@ class Login extends Controller
 {
     public function __invoke(LoginRequest $request): JsonResponse
     {
-        $authenticated = Auth::attempt($request->only('username', 'password'));
-
-        if (!$authenticated) {
-            abort(Response::HTTP_BAD_REQUEST);
+        if (Auth::attempt($request->only('username', 'password'), true)) {
+            return response()->json([
+                'message' => 'Successfully logged in',
+            ]);
         }
-        $token = Auth::user()->createToken('authToken');
 
         return response()->json([
-            'token' => $token->plainTextToken,
-        ]);
+            'message' => 'Invalid credentials',
+        ])->setStatusCode(Response::HTTP_UNAUTHORIZED);
     }
 
 }

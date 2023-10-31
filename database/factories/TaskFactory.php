@@ -31,13 +31,17 @@ class TaskFactory extends Factory
     public function withRandomAssigneesFrom(Collection $users)
     {
         return $this->afterCreating(function (Task $task) use ($users) {
-            $task->assignees()->attach($users->random(rand(1, 3))->pluck('id'));
+            $task
+                ->taskAssignees()
+                ->attach(
+                    $users->random(rand(1, 3))->pluck('id')
+                );
         });
     }
 
     public function withRandomType(Collection $taskTypes)
     {
-        return $this->state(function (array $attributes) use ($taskTypes) {
+        return $this->state(function () use ($taskTypes) {
             return [
                 'task_type_id' => $taskTypes->random()->id,
             ];

@@ -14,7 +14,10 @@
     },
     "dependencies": {
         "@vitejs/plugin-vue": "^4.4.0",
+        "@vueuse/sound": "^2.0.1",
+        "axios": "^1.6.0",
         "pinia": "^2.1.7",
+        "typescript": "^5.2.2",
         "vue": "^3.3.6",
         "vue-router": "^4.2.5"
     }
