@@ -1,11 +1,11 @@
 import {defineStore} from "pinia";
-import {Task, TaskType, useBackend} from "../backend";
+import {Todo, TodoType, useBackend} from "../backend";
 import {useAuthStore} from "./auth";
 
 
 type TaskStoreState = {
-    tasks: Task[];
-    taskTypes: TaskType[];
+    tasks: Todo[];
+    taskTypes: TodoType[];
 }
 
 export const useTaskStore = defineStore("task", {
@@ -15,11 +15,6 @@ export const useTaskStore = defineStore("task", {
     }),
     actions: {
         async initialize() {
-            // Cannot continue if not authenticated
-            if (!useAuthStore().isAuthenticated) {
-                return;
-            }
-
             await this.fetchTasks();
             await this.fetchTaskTypes();
         },
