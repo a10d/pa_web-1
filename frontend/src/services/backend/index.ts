@@ -1,9 +1,11 @@
+import {LocalStoreConnector} from "./Connectors/LocalStoreConnector.ts";
+
 export type User = {
     id: number;
     name: string;
-}
+};
 
-export type TaskType = {
+export type TodoType = {
     id: number;
     name: string;
     description: string;
@@ -11,7 +13,7 @@ export type TaskType = {
     reminderTime: number;
 }
 
-export type Task = {
+export type Todo = {
     id: number;
     type: number;
     title: string;
@@ -21,83 +23,32 @@ export type Task = {
     completed: boolean;
 };
 
+export interface Connector {
+    createUser(user: Partial<User>): Promise<User>;
 
-type LoginResponse = {
-    success: boolean;
-    error?: string;
+    updateUser(user: User): Promise<User>;
+
+    deleteUser(user: User): Promise<boolean>;
+
+    fetchUsers(): Promise<User[]>;
+
+    fetchTodos(): Promise<Todo[]>;
+
+    createTodo(todo: Partial<Todo>): Promise<Todo>;
+
+    updateTodo(todo: Todo): Promise<Todo>;
+
+    deleteTodo(todo: Todo): Promise<boolean>;
+
+    fetchTodoTypes(): Promise<TodoType[]>;
+
+    createTodoType(todoType: Partial<TodoType>): Promise<TodoType>;
+
+    updateTodoType(todoType: TodoType): Promise<TodoType>;
+
+    deleteTodoType(todoType: TodoType): Promise<boolean>;
 }
 
-class Connector {
+const client = new LocalStoreConnector();
 
-
-    async initialize() {
-
-    }
-
-    /**
-     * Login with the given credentials.
-     */
-    async login(credentials: { username: string, password: string }): Promise<LoginResponse> {
-        try {
-
-            return {
-                success: result.status === 200,
-            };
-        } catch (e) {
-            return {
-                success: false,
-                error: e.message,
-            };
-        }
-    }
-
-    async fetchUser() {
-        return //this.http.get("/api/auth/me");
-    }
-
-    async fetchUsers() {
-        return //this.http.get("/api/auth/users");
-    }
-
-
-    async fetchTasks() {
-        return //this.http.get("/api/tasks/all");
-    }
-
-    async createTask() {
-        return //this.http.post("/api/tasks/create");
-    }
-
-    async updateTask(task: Task) {
-        return //this.http.patch(`/api/tasks/update/${ task.id }`);
-    }
-
-    async deleteTask(task: Task) {
-        return //this.http.delete(`/api/tasks/update/${ task.id }`);
-    }
-
-    async fetchTaskTypes() {
-        return //this.http.get("/api/taskTypes/all");
-    }
-
-    async createTaskType() {
-        return //this.http.post("/api/taskTypes/create");
-    }
-
-    async updateTaskType(taskType: TaskType) {
-        return //this.http.patch(`/api/taskTypes/update/${ taskType.id }`);
-    }
-
-    async deleteTaskType(taskType: TaskType) {
-        return //this.http.delete(`/api/tasks/update/${ taskType.id }`);
-    }
-
-
-}
-
-
-const client = new Connector();
-
-client.initialize();
-
-export const useBackend = () => client;
+export const useBackend = (): Connector => client;

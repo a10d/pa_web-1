@@ -3,15 +3,28 @@
 import {computed, nextTick, reactive, ref} from "vue";
 import FormField from "../ui/FormField.vue";
 import PopButton from "../ui/PopButton.vue";
+import {useTodoStore} from "../../services/store/todo.ts";
 
-const taskForm = reactive({
+const store = useTodoStore();
+
+
+const selectableTodoTypes = computed(() => store.todoTypes.map((type) => ({
+  value: type.id,
+  label: type.name,
+})));
+
+const todoForm = reactive({
   title: "",
   description: "",
+  dueDate: new Date(),
+  todoType: 0,
+  assignees: [],
 });
 
+const isSubmitting = ref(false);
 const formVisible = ref(false);
 
-const taskCTAs = [
+const todoCTAs = [
   "Ohne Fleiss kein Preis! Wo fängst du an?",
   "Was steht noch an?",
   "Was ist noch zu tun?",
@@ -19,9 +32,16 @@ const taskCTAs = [
   "Was ist der Plan?",
   "Was gibts zu tun?",
 ];
-const taskCTA = computed(() => taskCTAs[Math.floor(Math.random() * taskCTAs.length)]);
+const todoCTA = computed(() => todoCTAs[Math.floor(Math.random() * todoCTAs.length)]);
 
 async function openActionBar() {
+
+  todoForm.title = "";
+  todoForm.description = "";
+  todoForm.dueDate = new Date();
+  todoForm.todoType = store.todoTypes[0].id;
+  todoForm.assignees = [];
+
   formVisible.value = true;
   await nextTick();
   const input = document.querySelector("input[name=title]") as HTMLInputElement;
@@ -33,7 +53,15 @@ function cancel() {
 }
 
 async function submitForm() {
-  alert("Submit");
+  isSubmitting.value = true;
+  try {
+    await store.createTodo(todoForm);
+    cancel();
+  } catch (e) {
+    // TODO: Handle error
+  } finally {
+    isSubmitting.value = false;
+  }
 }
 
 </script>
@@ -42,12 +70,12 @@ async function submitForm() {
 
   <!--  Action bar -->
   <input
-      :placeholder="taskCTA"
-      class="transition-all sticky top-6 bg-white focus:shadow-lg border rounded-lg w-full p-4 focus:ring outline-0"
+      :placeholder="todoCTA"
+      class="transition-all sticky top-6 bg-white focus:shadow-lg border rounded-lg w-full p-4 focus:ring outline-0 tracking-wide font-medium"
       @focus="openActionBar"
   />
 
-  <div v-if="formVisible" class="fixed inset-0 bg-white/80 backdrop-blur-lg" @click="cancel"/>
+  <div v-if="formVisible" class="fixed inset-0 bg-white/10 backdrop-blur-sm" @click="cancel"/>
 
   <!-- Form -->
   <transition enter-active-class="transition-all transform transform-gpu duration-250 ease-out origin-top"
@@ -57,22 +85,32 @@ async function submitForm() {
     <div v-if="formVisible" class="fixed top-4 left-1/2 -translate-x-1/2 w-full max-w-2xl p-2">
       <div class="mx-auto rounded-lg bg-white p-4 shadow-2xl border">
 
-        <fieldset>
-          <FormField
-              v-model="taskForm.title"
-              :placeholder="taskCTA"
-              label="Titel"
-              name="title"
-              required
-          />
+        <fieldset :disabled="isSubmitting">
+          <input v-model="todoForm.title" :placeholder="todoCTA"
+                 class="w-full outline-none py-1 mb-4 tracking-wide font-medium"
+                 name="title" required type="text"/>
 
           <FormField
-              v-model="taskForm.description"
-              label="Beschreibung"
+              v-model="todoForm.description"
+              label="Genauere Beschreibung"
               name="description"
               placeholder="Beschreibe die Aufgabe etwas genauer..."
               type="textarea"
           />
+
+          <div class="grid grid-cols-2 gap-4">
+
+            <div class="col-span-2 sm:col-span-1">
+              <FormField v-model="todoForm.dueDate" label="Fällig am" name="dueDate" type="date"/>
+            </div>
+
+            <div class="col-span-2 sm:col-span-1">
+              <FormField v-model="todoForm.todoType" :select-options="selectableTodoTypes" label="Aufgabentyp"
+                         name="todoType"
+                         type="select"/>
+            </div>
+
+          </div>
 
           <div class="flex justify-between gap-4">
             <PopButton
@@ -82,7 +120,7 @@ async function submitForm() {
             />
             <PopButton
                 color="green"
-                label="Sichern"
+                label="Loslegen"
                 @click="submitForm"
             />
           </div>

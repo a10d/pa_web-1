@@ -1,16 +1,18 @@
 <script lang="ts" setup>
 
-import {computed, onMounted} from "vue";
+import {onMounted, ref} from "vue";
 import {initStores} from "./services/store";
-import {useAuthStore} from "./services/store/auth";
-import Login from "./views/auth/Login.vue";
+import SkeletonLayout from "./components/layouts/SkeletonLayout.vue";
 
-onMounted(() => initStores());
-const isAuthenticated = computed(() => useAuthStore().isAuthenticated);
+const isInitialized = ref(false);
+onMounted(() => initStores().then(() => isInitialized.value = true));
 
 </script>
 
 <template>
-    <Login v-if="!isAuthenticated"/>
-    <RouterView v-if="isAuthenticated"/>
+  <!-- Skeleton -->
+  <SkeletonLayout v-if="!isInitialized"/>
+
+  <!-- Main App Router View -->
+  <RouterView v-if="isInitialized"/>
 </template>

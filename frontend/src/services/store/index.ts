@@ -1,10 +1,10 @@
 import {createPinia} from "pinia";
-import {useAuthStore} from "./auth";
+import {useTodoStore} from "./todo.ts";
 
 
 export const pinia = createPinia();
 
 
 export const initStores = async () => {
-    await useAuthStore().initialize();
+    await useTodoStore().initialize();
 };
