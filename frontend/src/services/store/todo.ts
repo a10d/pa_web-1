@@ -48,6 +48,15 @@ export const useTodoStore = defineStore("todo", {
         async deleteTodoType(todoType: TodoType) {
             await useBackend().deleteTodoType(todoType).then(this.fetchTodoTypes);
         },
+        todoTypeById(id: number): TodoType {
+            return this.todoTypes.find((i) => i.id === id) ?? {
+                id: 0,
+                name: "Unbekannt",
+                description: "Unbekannter Aufgabentyp",
+                reminderTime: 0,
+                color: "#000000",
+            }
+        },
 
         async fetchTodos() {
             this.todos = await useBackend().fetchTodos();

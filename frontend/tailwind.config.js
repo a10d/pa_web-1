@@ -6,7 +6,11 @@ export default {
         "./src/**/*.vue",
     ],
     theme: {
-        extend: {},
+        extend: {
+            fontFamily: {
+                'handwriting': ['"Architects Daughter"', 'handwriting'],
+            }
+        },
     },
     plugins: [],
 };

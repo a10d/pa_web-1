@@ -6,6 +6,7 @@
         :disabled="disabled"
         :name="name"
         :required="required"
+        :multiple="multiple"
         :value="value"
         @change="onInput"
     >
@@ -82,6 +83,7 @@ type InputFieldProps = {
     type: "text" | "number" | "textarea" | "select" | "file" | string;
     required: boolean;
     disabled: boolean;
+    multiple: boolean;
     selectOptions?: SelectOption[];
     value: string | number | boolean | object | any[] | null;
 };
@@ -92,6 +94,7 @@ withDefaults(
         type: "text",
         required: false,
         disabled: false,
+        multiple: false,
         value: "",
     },
 );
