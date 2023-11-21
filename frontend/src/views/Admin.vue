@@ -3,12 +3,14 @@
 import AppLayout from "../components/layouts/AppLayout.vue";
 import UserList from "../components/admin/UserList.vue";
 import TodoTypeList from "../components/admin/TodoTypeList.vue";
+import ImportExport from "../components/admin/ImportExport.vue";
 </script>
 
 <template>
-  <AppLayout>
-    <h1>Admin</h1>
-    <UserList/>
-    <TodoTypeList/>
-  </AppLayout>
+    <AppLayout>
+        <h1 class="text-2xl font-medium tracking-wider">Einstellungen</h1>
+        <UserList/>
+        <TodoTypeList/>
+        <ImportExport/>
+    </AppLayout>
 </template>

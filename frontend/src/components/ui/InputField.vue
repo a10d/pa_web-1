@@ -4,9 +4,9 @@
         :id="name"
         :class="[inputClasses, 'pb-2 pt-3 pr-3']"
         :disabled="disabled"
+        :multiple="multiple"
         :name="name"
         :required="required"
-        :multiple="multiple"
         :value="value"
         @change="onInput"
     >

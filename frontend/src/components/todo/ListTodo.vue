@@ -4,6 +4,7 @@ import {Todo, TodoType} from "../../services/backend";
 import {computed} from "vue";
 import {useTodoStore} from "../../services/store/todo.ts";
 import * as moment from "moment/moment";
+import {useEventBus} from "../../services/eventBus";
 
 type ListTodoProps = {
     todo: Todo,
@@ -12,13 +13,20 @@ type ListTodoProps = {
 const props = defineProps<ListTodoProps>();
 
 const store = useTodoStore();
+const eventBus = useEventBus();
 
 const checkBoxProxy = computed({
     get: () => props.todo.completed,
-    set: (completed: boolean) => store.updateTodo({
-        ...props.todo,
-        completed,
-    })
+    set: (completed: boolean) => {
+        if (completed === props.todo.completed) return;
+
+        eventBus.emit('playSound', completed ? 'todoCompleted' : 'todoUncompleted')
+
+        store.updateTodo({
+            ...props.todo,
+            completed,
+        })
+    }
 });
 
 const todoType = computed<TodoType>(() => store.todoTypeById(props.todo.type));
@@ -27,11 +35,8 @@ const dueDateRelative = computed(() => moment(props.todo.dueDate).fromNow());
 
 const isDueWarning = computed(() => {
     if (props.todo.completed) return false;
-
-    const diffTime = new Date(props.todo.dueDate).getTime() - new Date().getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    return diffDays >= todoType.value.reminderTime;
+    const dueDate = moment(props.todo.dueDate);
+    return dueDate.add(todoType.value.reminderTime, 'days').isAfter(moment());
 });
 
 </script>
@@ -56,7 +61,7 @@ const isDueWarning = computed(() => {
                 'line-through': todo.completed,
                 'text-gray-600': todo.completed,
             }"
-                    class="text-lg font-medium font-handwriting"
+                    class="text-lg font-medium"
                     v-text="todo.title"
                 />
             </div>
@@ -67,7 +72,6 @@ const isDueWarning = computed(() => {
                 'line-through': todo.completed,
                 'text-gray-600': todo.completed,
             }"
-                   class="font-handwriting"
                    v-text="todo.description"/>
             </div>
 
@@ -83,11 +87,23 @@ const isDueWarning = computed(() => {
             <div class="p-2">
 
 
-                <pre>{{ todo }}</pre>
-                <pre>{{ {isDueWarning} }}</pre>
-                <pre>{{ {todoType} }}</pre>
-
             </div>
         </div>
     </div>
 </template>
+
+<style scoped>
+
+.border-warning {
+    border-color: v-bind('todoType.color');
+}
+
+.bg-warning {
+    background-color: v-bind('todoType.color');
+}
+
+.text-warning {
+    color: v-bind('todoType.color');
+}
+
+</style>

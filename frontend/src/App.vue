@@ -10,9 +10,9 @@ onMounted(() => initStores().then(() => isInitialized.value = true));
 </script>
 
 <template>
-  <!-- Skeleton -->
-  <SkeletonLayout v-if="!isInitialized"/>
+    <!-- Skeleton -->
+    <SkeletonLayout v-if="!isInitialized"/>
 
-  <!-- Main App Router View -->
-  <RouterView v-if="isInitialized"/>
+    <!-- Main App Router View -->
+    <RouterView v-if="isInitialized"/>
 </template>

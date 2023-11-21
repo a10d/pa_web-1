@@ -9,12 +9,9 @@ type UserAvatarProps = {
 
 const props = defineProps<UserAvatarProps>();
 
-const initials = computed(() => props.user.name
-    .split(" ")
-    .splice(0, 2)
+const initials = computed(() => [props.user.firstName, props.user.lastName]
     .map((name) => name[0])
     .join(""));
-
 
 </script>
 

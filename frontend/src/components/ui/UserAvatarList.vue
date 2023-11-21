@@ -7,11 +7,11 @@ type UserAvatarListProps = {
     users: User[],
 };
 
-const props = defineProps<UserAvatarListProps>();
+defineProps<UserAvatarListProps>();
 
 </script>
 
 <template>
 
-    <UserAvatar v-for="user in users" :key="user.id" class="-mr-1.5" user="user"/>
+    <UserAvatar v-for="user in users" :key="user.id" :user="user" class="-mr-1.5"/>
 </template>

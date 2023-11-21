@@ -4,7 +4,9 @@ import {computed, nextTick, reactive, ref} from "vue";
 import FormField from "../ui/FormField.vue";
 import PopButton from "../ui/PopButton.vue";
 import {useTodoStore} from "../../services/store/todo.ts";
+import {useEventBus} from "../../services/eventBus";
 
+const eventBus = useEventBus();
 const store = useTodoStore();
 
 
@@ -51,18 +53,23 @@ async function openActionBar() {
     await nextTick();
     const input = document.querySelector("input[name=title]") as HTMLInputElement;
     input.focus();
+
+    eventBus.emit('playSound', 'openTodoForm')
 }
 
 function cancel() {
     formVisible.value = false;
+    eventBus.emit('playSound', 'closeTodoForm')
 }
 
 async function submitForm() {
     isSubmitting.value = true;
     try {
         await store.createTodo(todoForm);
+        eventBus.emit('playSound', 'submitTodoForm')
         cancel();
     } catch (e) {
+        eventBus.emit('playSound', 'formError')
         // TODO: Handle error
     } finally {
         isSubmitting.value = false;
@@ -76,28 +83,21 @@ async function submitForm() {
     <!--  Action bar -->
     <input
         :placeholder="todoCTA"
-        class="transition-all sticky top-6 bg-white focus:shadow-lg border rounded-lg w-full p-4 focus:ring outline-0 tracking-wide font-medium"
+        class="transition-all sticky top-6 bg-white focus:shadow-lg border rounded-lg w-full p-4 focus:ring outline-0 tracking-wide font-medium select-none"
         @focus="openActionBar"
     />
 
-    <div v-if="formVisible" class="fixed inset-0 bg-white/10 backdrop-blur-sm" @click="cancel"/>
+    <div v-if="formVisible" class="fixed inset-0 bg-white/10 backdrop-blur-sm z-40" @click="cancel"/>
 
     <!-- Form -->
     <transition enter-active-class="transition-all transform transform-gpu duration-250 ease-out origin-top"
                 enter-from-class="scale-y-0 opacity-0"
                 leave-active-class="transition-all transform transform-gpu duration-300 ease-out origin-top"
                 leave-to-class="scale-y-0 opacity-0">
-        <div v-if="formVisible" class="fixed top-4 left-1/2 -translate-x-1/2 w-full max-w-2xl p-2">
+        <div v-if="formVisible" class="fixed top-4 left-1/2 -translate-x-1/2 w-full max-w-2xl p-2 z-50">
             <div class="mx-auto rounded-lg bg-white p-4 shadow-2xl border">
 
                 <fieldset :disabled="isSubmitting">
-                    <label
-                        for="title"
-                        class="inline-flex items-center gap-2 px-2 text-sm font-medium"
-                    >
-                        Titel
-                    </label>
-
                     <input v-model="todoForm.title" :placeholder="todoCTA"
                            class="w-full outline-none py-1 mb-4 tracking-wide font-medium"
                            name="title" required type="text"/>
@@ -125,7 +125,6 @@ async function submitForm() {
                         </div>
 
                     </div>
-
 
 
                     <FormField v-model="todoForm.assignees"
