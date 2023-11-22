@@ -1,3 +1,4 @@
+import {v4 as uuid} from "uuid";
 import {Todo, TodoType, User} from "../index.ts";
 import {Connector} from "./Connector.ts";
 
@@ -128,7 +129,7 @@ export class ArrayConnector implements Connector {
             users: this.users,
             todos: this.todos,
             todoTypes: this.todoTypes,
-        }));
+        }, null, 2));
     }
 
     importData(data: string): Promise<boolean> {
@@ -162,7 +163,7 @@ export class ArrayConnector implements Connector {
     }
 
     protected newId(): string {
-        return 'generated_' + Math.floor(Math.random() * 100000);
+        return uuid();
     }
 
     protected writeChanges() {

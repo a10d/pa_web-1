@@ -6,6 +6,7 @@ import PopButton from "../ui/PopButton.vue";
 import Modal from "../ui/Modal.vue";
 import FormField from "../ui/FormField.vue";
 import {TodoType} from "../../services/backend";
+import FormErrors from "../ui/FormErrors.vue";
 
 const store = useTodoStore();
 
@@ -22,6 +23,7 @@ const createModalOpen = ref(false);
 
 function openCreateModal() {
     createModalOpen.value = true;
+    formError.value = null;
 
     createForm.name = "";
     createForm.description = "";
@@ -39,15 +41,16 @@ function cancelCreateModal() {
 }
 
 const isSubmitting = ref(false);
+const formError = ref<Error | null>(null);
 
 async function submitCreateForm() {
     isSubmitting.value = true;
-
+    formError.value = null;
     try {
         await store.createTodoType(createForm);
         cancelCreateModal();
     } catch (e) {
-        // TODO: Error handling
+        formError.value = e;
     } finally {
         isSubmitting.value = false;
     }
@@ -55,9 +58,10 @@ async function submitCreateForm() {
 
 async function deleteTodoType(todoType: TodoType) {
     try {
+        formError.value = null;
         await store.deleteTodoType(todoType);
     } catch (e) {
-        // TODO: Error handling
+        formError.value = e;
     }
 }
 
@@ -73,6 +77,7 @@ const editForm = reactive({
 
 function editTodoType(todoType: TodoType) {
     editingTodoType.value = todoType;
+    formError.value = null;
 
     editForm.name = todoType.name;
     editForm.description = todoType.description;
@@ -91,6 +96,7 @@ function cancelEditingTodoType() {
 
 async function submitEditForm() {
     isSubmitting.value = true;
+    formError.value = null;
     try {
         await store.updateTodoType({
             ...editingTodoType.value,
@@ -98,7 +104,7 @@ async function submitEditForm() {
         } as TodoType);
         cancelEditingTodoType();
     } catch (e) {
-        // TODO: Error handling
+        formError.value = e;
     } finally {
         isSubmitting.value = false;
     }
@@ -150,6 +156,8 @@ async function submitEditForm() {
             <fieldset :disabled="isSubmitting" class="p-4">
                 <h2 class="text-xl font-medium mb-4">Aufgabentyp erfassen</h2>
 
+                <FormErrors :error="formError"/>
+
                 <FormField v-model="createForm.name" label="Name" name="name" required/>
                 <FormField v-model="createForm.description" label="Beschreibung" name="description" type="textarea"/>
                 <FormField v-model="createForm.color" label="Farbe" name="color" type="color"/>
@@ -170,6 +178,8 @@ async function submitEditForm() {
         <form @submit.prevent="submitEditForm">
             <fieldset :disabled="isSubmitting" class="p-4">
                 <h2 class="text-xl font-medium mb-4">Aufgabentyp bearbeiten</h2>
+
+                <FormErrors :error="formError"/>
 
                 <FormField v-model="editForm.name" label="Name" name="name" required/>
                 <FormField v-model="editForm.description" label="Beschreibung" name="description" type="textarea"/>

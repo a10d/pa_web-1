@@ -26,6 +26,7 @@ export type Todo = {
     completed: boolean;
 };
 
+export type FormError = {}
 
 const client = new LocalStoreConnector();
 

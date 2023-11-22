@@ -6,6 +6,9 @@ import PopButton from "../ui/PopButton.vue";
 import Modal from "../ui/Modal.vue";
 import FormField from "../ui/FormField.vue";
 import {User} from "../../services/backend";
+import FormErrors from "../ui/FormErrors.vue";
+import {useErrorHandler} from "../../services/errorHandler";
+import UserAvatar from "../ui/UserAvatar.vue";
 
 const store = useTodoStore();
 
@@ -23,7 +26,7 @@ function openCreateModal() {
     createForm.firstName = "";
     createForm.lastName = "";
     createForm.email = "";
-
+    formError.value = null;
     nextTick(() => {
         const input = document.querySelector("input[name=firstName]") as HTMLInputElement;
         input.focus();
@@ -35,15 +38,16 @@ function cancelCreateModal() {
 }
 
 const isSubmitting = ref(false);
+const formError = ref<Error | null>(null);
 
 async function submitCreateForm() {
     isSubmitting.value = true;
-
+    formError.value = null;
     try {
         await store.createUser(createForm);
         cancelCreateModal();
     } catch (e) {
-        // TODO: Error handling
+        formError.value = e;
     } finally {
         isSubmitting.value = false;
     }
@@ -53,7 +57,7 @@ async function deleteUser(user: User) {
     try {
         await store.deleteUser(user);
     } catch (e) {
-        // TODO: Error handling
+        useErrorHandler().handle(e);
     }
 }
 
@@ -71,7 +75,7 @@ function editUser(user: User) {
     editForm.firstName = user.firstName;
     editForm.lastName = user.lastName;
     editForm.email = user.email;
-
+    formError.value = null;
     nextTick(() => {
         const input = document.querySelector("input[name=firstName]") as HTMLInputElement;
         input.focus();
@@ -84,6 +88,7 @@ function cancelEditingUser() {
 
 async function submitEditForm() {
     isSubmitting.value = true;
+    formError.value = null;
     try {
         await store.updateUser({
             ...editingUser.value,
@@ -91,7 +96,7 @@ async function submitEditForm() {
         } as User);
         cancelEditingUser();
     } catch (e) {
-        // TODO: Error handling
+        formError.value = e;
     } finally {
         isSubmitting.value = false;
     }
@@ -118,6 +123,7 @@ async function submitEditForm() {
             <!-- List Items -->
             <div v-for="user in users" :key="user.id"
                  class="rounded bg-white p-2 mb-2 shadow md:flex gap-2 group items-center">
+                <UserAvatar :user="user" class="h-8"/>
                 <div class="mr-auto">
                     <p class="font-medium text-lg" v-text="`${user.firstName} ${user.lastName}`"/>
                     <p class="text-base text-gray-600" v-text="user.email"/>
@@ -137,7 +143,7 @@ async function submitEditForm() {
         <form @submit.prevent="submitCreateForm">
             <fieldset :disabled="isSubmitting" class="p-4">
                 <h2 class="text-xl font-medium mb-4">Person erfassen</h2>
-
+                <FormErrors :error="formError"/>
                 <FormField v-model="createForm.firstName" label="Vorname" name="firstName" required/>
                 <FormField v-model="createForm.lastName" label="Nachname" name="name" required/>
                 <FormField v-model="createForm.email" label="E-Mail" name="email" required type="email"/>
@@ -156,7 +162,7 @@ async function submitEditForm() {
         <form @submit.prevent="submitEditForm">
             <fieldset :disabled="isSubmitting" class="p-4">
                 <h2 class="text-xl font-medium mb-4">Person bearbeiten</h2>
-
+                <FormErrors :error="formError"/>
                 <FormField v-model="editForm.firstName" label="Vorname" name="firstName" required/>
                 <FormField v-model="editForm.lastName" label="Nachname" name="name" required/>
                 <FormField v-model="editForm.email" label="E-Mail" name="email" required type="email"/>

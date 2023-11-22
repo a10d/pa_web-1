@@ -4,7 +4,7 @@ import SoundEffects from "../SoundEffects.vue";
 </script>
 
 <template>
-    <div class="mx-auto p-2 max-w-2xl flex flex-col h-screen relative">
+    <div class="mx-auto p-2 max-w-2xl flex flex-col min-h-screen relative">
         <header
             class="static md:absolute right-full h-20 md:w-20 text-gray-400 flex md:flex-col gap-4 justify-center items-center my-8">
             <RouterLink active-class="text-black" to="/">

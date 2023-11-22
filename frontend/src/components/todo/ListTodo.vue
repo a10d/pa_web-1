@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 
-import {Todo, TodoType} from "../../services/backend";
+import {Todo, TodoType, User} from "../../services/backend";
 import {computed} from "vue";
 import {useTodoStore} from "../../services/store/todo.ts";
 import * as moment from "moment/moment";
+import 'moment/locale/de-ch';
 import {useEventBus} from "../../services/eventBus";
+import UserAvatarList from "../ui/UserAvatarList.vue";
 
 type ListTodoProps = {
     todo: Todo,
@@ -31,42 +33,65 @@ const checkBoxProxy = computed({
 
 const todoType = computed<TodoType>(() => store.todoTypeById(props.todo.type));
 
-const dueDateRelative = computed(() => moment(props.todo.dueDate).fromNow());
+const assignees = computed<User[]>(() => props.todo.assignees
+    .map(id => store.users.find(user => user.id === id))
+    .filter(user => typeof user === 'object'));
 
-const isDueWarning = computed(() => {
-    if (props.todo.completed) return false;
-    const dueDate = moment(props.todo.dueDate);
-    return dueDate.add(todoType.value.reminderTime, 'days').isAfter(moment());
-});
+const dueDateReadable = computed<string>(() => moment(props.todo.dueDate).locale('de-ch').format('dddd, DD. MMMM YYYY'));
+const dueDateRelative = computed<string>(() => moment(props.todo.dueDate).locale('de-ch').fromNow());
+const isDueWarning = computed<boolean>(() => !props.todo.completed && moment(props.todo.dueDate)
+    .subtract(todoType.value.reminderTime, 'days').isBefore(moment()));
 
 </script>
 
 <template>
 
+    <article :class="{'border-warning': isDueWarning,}" class="todo">
 
-    <div class="flex items-stretch border-b">
-        <!-- checkbox -->
-        <div class="w-8 border-r p-2">
+        <!-- Checkbox -->
+        <div class="w-8 p-2">
             <input v-model="checkBoxProxy"
-                   class="border-transparent aspect-square w-4"
+                   class="border-transparent aspect-square w-4 cursor-pointer"
                    type="checkbox"/>
         </div>
 
-        <!-- content -->
-        <div class="flex-grow">
+        <div>
 
-            <!-- title -->
-            <div class="p-1.5 border-b border-dotted">
+            <!-- Title -->
+            <div class="px-2 py-1">
                 <h1 :class="{
                 'line-through': todo.completed,
                 'text-gray-600': todo.completed,
+                'text-warning': isDueWarning,
+                'font-bold': isDueWarning,
             }"
                     class="text-lg font-medium"
                     v-text="todo.title"
                 />
             </div>
 
-            <!-- description -->
+
+            <!-- Details -->
+            <div class="pr-2">
+                <!-- Due Date -->
+                <span :class="{'bg-warning text-white font-bold shadow-sm': isDueWarning}"
+                      :title="dueDateReadable"
+                      class="inline-block text-sm text-gray-600 rounded-full py-1 px-2">
+                    Fällig {{ dueDateRelative }}
+                </span>
+
+                <!-- Type -->
+                <span class="inline-block ml-2 text-sm">
+                      <span :style="{color: todoType.color}" class="mr-1">■</span>
+                     <span class="font-medium" v-text="todoType.name"/>
+                </span>
+
+                <!-- Assignees -->
+                <UserAvatarList :users="assignees" class="ml-2"/>
+            </div>
+
+
+            <!-- Description -->
             <div class="p-2">
                 <p :class="{
                 'line-through': todo.completed,
@@ -75,24 +100,16 @@ const isDueWarning = computed(() => {
                    v-text="todo.description"/>
             </div>
 
-            <!-- due date -->
-            <div class="p-2">
-                <p class="text-sm text-gray-600">
-                    Fällig {{ dueDateRelative }}
-                </p>
-            </div>
-
-
-            <!-- Assignees -->
-            <div class="p-2">
-
-
-            </div>
         </div>
-    </div>
+    </article>
 </template>
 
 <style scoped>
+
+.todo {
+    @apply flex border rounded-lg mb-4 shadow-sm;
+}
+
 
 .border-warning {
     border-color: v-bind('todoType.color');

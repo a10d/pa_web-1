@@ -19,7 +19,7 @@ async function openImport() {
         if (!file) return;
 
         const reader = new FileReader();
-        reader.addEventListener('load', (event) => importData(event.target?.result));
+        reader.addEventListener('load', (event) => importData(event.target?.result ?? undefined));
         reader.readAsText(file);
     });
     inputFile.click();
@@ -30,6 +30,12 @@ async function importData(data: string | ArrayBuffer | undefined) {
     try {
         if (!data) {
             throw new Error('Data stream not readable');
+        }
+
+        // If data is ArrayBuffer, convert to string
+        if (data instanceof ArrayBuffer) {
+            const decoder = new TextDecoder('utf-8');
+            data = decoder.decode(data);
         }
 
         await backend.importData(data);

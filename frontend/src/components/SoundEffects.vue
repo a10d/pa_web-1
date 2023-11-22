@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 
-import {useEventBus} from "../services/eventBus";
-import {useSound} from "@vueuse/sound";
-import popSound from '../assets/sounds.mp3'
 import {onMounted} from "vue";
 import {useStorage} from "@vueuse/core";
+// @ts-ignore - Types are not configured correctly @see https://github.com/vueuse/sound/issues/42
+import {useSound} from "@vueuse/sound";
+import {useEventBus} from "../services/eventBus";
+import popSound from '../assets/sounds.mp3'
 
 const soundMap = {
     'todoCompleted': 'scratch',
@@ -24,27 +25,28 @@ const {play} = useSound(popSound, {
     },
 });
 
-
 // preload audio context by playing a sound
 onMounted(() => play({id: 'ding', volume: 0.01,}));
 
 const eventBus = useEventBus();
 
 const soundsEnabled = useStorage('soundsEnabled', true);
-const toggleSounds = () => {
+
+function toggleSounds() {
     soundsEnabled.value = !soundsEnabled.value;
     eventBus.emit('playSound', 'enableSounds')
-};
+}
 
 eventBus.on('playSound', (soundEvent: string) => {
     if (!soundsEnabled.value) return;
 
     if (!soundMap.hasOwnProperty(soundEvent)) {
-        console.info('No mapped sound for event', soundEvent)
+        console.debug('No mapped sound for event', soundEvent)
         return;
     }
 
     play({
+        // @ts-ignore - Key is guarded, so stfu, dear typescript compiler
         id: soundMap[soundEvent],
         volume: 0.4,
         interrupt: true,
@@ -73,6 +75,4 @@ eventBus.on('playSound', (soundEvent: string) => {
             <line x1="17" x2="23" y1="9" y2="15"></line>
         </svg>
     </button>
-
-
 </template>

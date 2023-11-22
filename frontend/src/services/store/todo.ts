@@ -30,12 +30,16 @@ export const useTodoStore = defineStore("todo", {
             this.users = await useBackend().fetchUsers();
             eventBus.emit('fetchUsers');
         },
+
+
         async createUser(user: Partial<User>) {
             await useBackend()
                 .createUser(user)
                 .then((result) => eventBus.emit('createUser', result))
                 .then(this.fetchUsers);
         },
+
+
         async updateUser(user: User) {
             await useBackend()
                 .updateUser(user)
