@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 
-import {computed} from "vue";
-
 type PopButtonProps = {
     label?: string;
     type?: "submit" | "button";
@@ -16,101 +14,94 @@ const props = withDefaults(defineProps<PopButtonProps>(), {
     disabled: false,
 });
 
-const buttonClassNames = computed(() => {
-
-    const classNames = [
-        "rounded-lg px-4 py-2 pb-3",
-        "font-medium text-sm",
-        "transition-all",
-        "active:translate-y-0.5 active:scale-y-95 active:scale-x-105",
-        "duration-200 ease-in-out",
-        "hover:shadow focus:shadow",
-    ];
-
-    if (props.color === "green") {
-        classNames.push(...[
-            "text-white",
-            "bg-green-600",
-            "shadow-green-800",
-            "hover:bg-green-500 hover:shadow-green-500",
-            "focus:bg-green-500 focus:shadow-green-500",
-            "active:bg-green-700",
-        ]);
-    }
-
-    if (props.color === "red") {
-        classNames.push(...[
-            "text-white",
-            "bg-red-600",
-            "shadow-red-800",
-            "hover:bg-red-500 hover:shadow-red-500",
-            "focus:bg-red-500 focus:shadow-red-500",
-            "active:bg-red-700",
-        ]);
-    }
-
-    if (props.color === "gray") {
-        classNames.push(...[
-            "text-black",
-            "bg-gray-100",
-            "shadow-gray-200",
-            "hover:bg-gray-200 hover:shadow-gray-300",
-            "focus:bg-gray-200 focus:shadow-gray-300",
-            "active:bg-gray-300",
-        ]);
-    }
-
-    if (props.color === "amber") {
-        classNames.push(...[
-            "text-black",
-            "bg-amber-400",
-            "shadow-amber-300",
-            "hover:bg-amber-300 hover:shadow-amber-300",
-            "focus:bg-amber-300 focus:shadow-amber-300",
-            "active:bg-amber-400",
-        ]);
-    }
-
-    return classNames;
-});
-
 </script>
 
 <template>
-    <button :class="buttonClassNames" :disabled="disabled" :type="type">
+    <button :class="['boettong', props.color]" :disabled="disabled" :type="type">
         <span v-if="label" v-text="label"/>
         <slot v-else/>
     </button>
 </template>
 
-<style scoped>
+<style>
 
-button {
-    @apply relative;
+.boettong {
+    @apply relative rounded-lg px-4 py-2 pb-3 font-medium text-sm transition-all duration-200 ease-in-out cursor-pointer;
     text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
 }
 
-button::after {
+.boettong:disabled {
+    @apply opacity-50 cursor-not-allowed;
+}
+
+.boettong:not(:disabled) {
+    @apply shadow-sm;
+}
+
+.boettong:hover:not(:disabled) {
+    @apply shadow-md;
+}
+
+.boettong:active:not(:disabled) {
+    @apply scale-x-105 scale-y-95 translate-y-0.5 transform shadow-sm;
+}
+
+.boettong::after {
     @apply absolute inset-0 rounded-lg;
     content: '';
     box-shadow: inset 0 -.25rem 0 rgba(0, 0, 0, .2);
 }
 
-button::before {
+.boettong::before {
     @apply absolute inset-px rounded-lg transition-all;
     bottom: calc(.25rem + 1px);
     content: '';
     box-shadow: inset 0 0 0.125rem rgba(255, 255, 255, .2);
 }
 
-button:hover::before {
+.boettong:hover:not(:disabled)::before {
     box-shadow: inset 0 0 0.125rem rgba(255, 255, 255, .4);
 }
 
-button:active::after {
+.boettong:active:not(:disabled)::after {
     @apply absolute inset-0 rounded-lg;
     content: '';
     box-shadow: inset 0 -.25rem 0 rgba(0, 0, 0, .2);
 }
+
+
+.boettong.green {
+    @apply text-white bg-green-600 shadow-green-800;
+}
+
+.boettong.green:not(:disabled) {
+    @apply hover:bg-green-500 hover:shadow-green-500 focus:bg-green-500 focus:shadow-green-500 active:bg-green-700;
+}
+
+
+.boettong.red {
+    @apply text-white  bg-red-600  shadow-red-800 ;
+}
+
+.boettong.red:not(:disabled) {
+    @apply hover:bg-red-500 hover:shadow-red-500  focus:bg-red-500 focus:shadow-red-500  active:bg-red-700;
+}
+
+.boettong.gray {
+    @apply text-black bg-gray-100 shadow-gray-200;
+}
+
+.boettong.gray:not(:disabled) {
+    @apply hover:bg-gray-200 hover:shadow-gray-300  focus:bg-gray-200 focus:shadow-gray-300  active:bg-gray-300;
+}
+
+.boettong.amber {
+    @apply text-black bg-amber-400 shadow-amber-300;
+}
+
+.boettong.amber:not(:disabled) {
+    @apply hover:bg-amber-300 hover:shadow-amber-300 focus:bg-amber-300 focus:shadow-amber-300 active:bg-amber-400;
+}
+
 
 </style>

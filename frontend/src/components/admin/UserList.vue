@@ -100,34 +100,35 @@ async function submitEditForm() {
 </script>
 
 <template>
+    <div class="relative">
+        <!-- Header -->
+        <div class="flex items-center justify-between gap-2 sticky top-0 py-4 bg-white/80 backdrop-blur-sm">
+            <h2 class="text-xl font-medium">Personen</h2>
+            <PopButton color="gray" label="Erfassen" type="button" @click="openCreateModal"/>
+        </div>
 
-    <!-- Header -->
-    <div class="flex items-center justify-between gap-2 sticky top-0 py-4 bg-white/80 backdrop-blur-sm">
-        <h2 class="text-xl font-medium">Personen</h2>
-        <PopButton color="gray" label="Erfassen" type="button" @click="openCreateModal"/>
-    </div>
+
+        <!-- List -->
+        <div class="p-2 pb-0.5 rounded-lg bg-gray-100 shadow-inner">
+
+            <!-- No Content -->
+            <p v-if="users.length === 0" class="text-center text-sm text-gray-800 my-12">Es wurden noch keine Personen
+                erfasst...</p>
+
+            <!-- List Items -->
+            <div v-for="user in users" :key="user.id"
+                 class="rounded bg-white p-2 mb-2 shadow md:flex gap-2 group items-center">
+                <div class="mr-auto">
+                    <p class="font-medium text-lg" v-text="`${user.firstName} ${user.lastName}`"/>
+                    <p class="text-base text-gray-600" v-text="user.email"/>
+                </div>
 
 
-    <!-- List -->
-    <div class="p-2 pb-0.5 rounded-lg bg-gray-100 shadow-inner">
-
-        <!-- No Content -->
-        <p v-if="users.length === 0" class="text-center text-sm text-gray-800 my-12">Es wurden noch keine Personen
-            erfasst...</p>
-
-        <!-- List Items -->
-        <div v-for="user in users" :key="user.id"
-             class="rounded bg-white p-2 mb-2 shadow md:flex gap-2 group items-center">
-            <div class="mr-auto">
-                <p class="font-medium text-lg" v-text="`${user.firstName} ${user.lastName}`"/>
-                <p class="text-base text-gray-600" v-text="user.email"/>
+                <PopButton class="group-hover:opacity-100 opacity-0" color="gray" label="Bearbeiten" type="button"
+                           @click="editUser(user)"/>
+                <PopButton class="group-hover:opacity-100 opacity-0" color="red" label="Löschen" type="button"
+                           @click="deleteUser(user)"/>
             </div>
-
-
-            <PopButton class="group-hover:opacity-100 opacity-0" color="gray" label="Bearbeiten" type="button"
-                       @click="editUser(user)"/>
-            <PopButton class="group-hover:opacity-100 opacity-0" color="red" label="Löschen" type="button"
-                       @click="deleteUser(user)"/>
         </div>
     </div>
 

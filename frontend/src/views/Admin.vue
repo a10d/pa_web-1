@@ -8,7 +8,7 @@ import ImportExport from "../components/admin/ImportExport.vue";
 
 <template>
     <AppLayout>
-        <h1 class="text-2xl font-medium tracking-wider">Einstellungen</h1>
+        <h1 class="text-2xl font-medium tracking-wider mt-8">Admin-Bereich</h1>
         <UserList/>
         <TodoTypeList/>
         <ImportExport/>

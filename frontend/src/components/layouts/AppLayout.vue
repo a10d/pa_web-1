@@ -4,11 +4,9 @@ import SoundEffects from "../SoundEffects.vue";
 </script>
 
 <template>
-
-    <div class="mx-auto my-4 p-2 max-w-2xl flex flex-col h-screen relative">
-
+    <div class="mx-auto p-2 max-w-2xl flex flex-col h-screen relative">
         <header
-            class="static md:absolute right-full h-20 md:w-20 text-gray-400 flex md:flex-col gap-4 justify-center items-center mt-3">
+            class="static md:absolute right-full h-20 md:w-20 text-gray-400 flex md:flex-col gap-4 justify-center items-center my-8">
             <RouterLink active-class="text-black" to="/">
                 <svg class="w-16 h-16"
                      style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;"
@@ -32,7 +30,6 @@ import SoundEffects from "../SoundEffects.vue";
                     </g>
                 </svg>
             </RouterLink>
-
             <RouterLink active-class="text-black" to="/admin">
                 <svg class="w-8 h-8" fill="none" height="24" stroke="currentColor" stroke-linecap="round"
                      stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"
@@ -42,8 +39,6 @@ import SoundEffects from "../SoundEffects.vue";
                         d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                 </svg>
             </RouterLink>
-
-
         </header>
 
         <main class="flex-grow">
@@ -51,12 +46,11 @@ import SoundEffects from "../SoundEffects.vue";
         </main>
 
         <footer>
-            <p class="text-gray-500 text-xs select-none">
+            <p class="text-gray-500 text-xs select-none my-8">
                 <span>&copy; 2023 Aaron Schmied</span>
                 &bull;
                 <span>Arbeit der ipso Bildung</span>
             </p>
-
             <SoundEffects/>
         </footer>
     </div>

@@ -12,13 +12,17 @@ const store = useTodoStore();
 
 const selectableTodoTypes = computed(() => store.todoTypes.map((type) => ({
     value: type.id,
-    label: type.name,
+    insecureAsHtml: true,
+    label: `<span style="color: ${type.color} !important; background: ${type.color}">■</span> ${type.name}`,
 })));
 
 const selectableAssignees = computed(() => store.users.map((user) => ({
     value: user.id,
-    label: user.name,
+    label: `${user.firstName} ${user.lastName}`
 })));
+
+
+const formDisabled = computed(() => isSubmitting.value || selectableTodoTypes.value.length === 0);
 
 const todoForm = reactive({
     title: "",
@@ -46,7 +50,7 @@ async function openActionBar() {
     todoForm.title = "";
     todoForm.description = "";
     todoForm.dueDate = new Date();
-    todoForm.type = store.todoTypes[0].id;
+    todoForm.type = store.todoTypes[0]?.id;
     todoForm.assignees = [];
 
     formVisible.value = true;
@@ -97,11 +101,12 @@ async function submitForm() {
         <div v-if="formVisible" class="fixed top-4 left-1/2 -translate-x-1/2 w-full max-w-2xl p-2 z-50">
             <div class="mx-auto rounded-lg bg-white p-4 shadow-2xl border">
 
-                <fieldset :disabled="isSubmitting">
+                <fieldset :disabled="formDisabled">
                     <input v-model="todoForm.title" :placeholder="todoCTA"
                            class="w-full outline-none py-1 mb-4 tracking-wide font-medium"
                            name="title" required type="text"/>
 
+                    <!-- Description -->
                     <FormField
                         v-model="todoForm.description"
                         label="Genauere Beschreibung"
@@ -111,7 +116,6 @@ async function submitForm() {
                     />
 
                     <div class="grid grid-cols-2 gap-4">
-
                         <div class="col-span-2 sm:col-span-1">
                             <FormField v-model="todoForm.dueDate" label="Fällig am" name="dueDate" type="date"/>
                         </div>
@@ -126,7 +130,6 @@ async function submitForm() {
 
                     </div>
 
-
                     <FormField v-model="todoForm.assignees"
                                :select-options="selectableAssignees"
                                label="Zuständige Personen"
@@ -134,20 +137,22 @@ async function submitForm() {
                                name="assignees"
                                type="select"/>
 
-                    <div class="flex justify-between gap-4">
-                        <PopButton
-                            color="gray"
-                            label="Abbrechen"
-                            @click="cancel"
-                        />
-                        <PopButton
-                            color="green"
-                            label="Loslegen"
-                            @click="submitForm"
-                        />
-                    </div>
-
                 </fieldset>
+                <div class="flex justify-between gap-4">
+                    <PopButton
+                        :disabled="isSubmitting"
+                        color="gray"
+                        label="Abbrechen"
+                        @click="cancel"
+                    />
+                    <PopButton
+                        :disabled="formDisabled"
+                        color="green"
+                        label="Loslegen"
+                        @click="submitForm"
+                    />
+                </div>
+
 
             </div>
         </div>

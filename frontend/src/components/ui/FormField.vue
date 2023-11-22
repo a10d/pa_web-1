@@ -59,6 +59,7 @@ type FormFieldProps = {
 export interface SelectOption {
     value: string | number | boolean;
     label: string;
+    insecureAsHtml?: boolean;
     disabled?: boolean;
 }
 

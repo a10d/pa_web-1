@@ -10,12 +10,10 @@
         :value="value"
         @change="onInput"
     >
-        <option
-            v-for="{value, label, disabled} in selectOptions"
-            :disabled="disabled"
-            :value="value"
-            v-text="label"
-        />
+        <template v-for="{value, label, disabled, insecureAsHtml} in selectOptions" :key="value">
+            <option v-if="insecureAsHtml === true" :disabled="disabled" :value="value" v-html="label"/>
+            <option v-else :disabled="disabled" :value="value" v-text="label"/>
+        </template>
     </select>
     <input
         v-else-if="type==='number'"
@@ -76,6 +74,7 @@ export interface SelectOption {
     value: string | number | boolean;
     label: string;
     disabled?: boolean;
+    insecureAsHtml?: boolean;
 }
 
 type InputFieldProps = {

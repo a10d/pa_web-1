@@ -108,37 +108,39 @@ async function submitEditForm() {
 
 <template>
 
-    <!-- Header -->
-    <div class="flex items-center justify-between gap-2 sticky top-0 py-4 bg-white/80 backdrop-blur-sm">
-        <h2 class="text-xl font-medium">Aufgabentypen</h2>
-        <PopButton color="gray" label="Erfassen" type="button" @click="openCreateModal"/>
-    </div>
+    <div class="relative">
+        <!-- Header -->
+        <div class="flex items-center justify-between gap-2 sticky top-0 py-4 bg-white/80 backdrop-blur-sm">
+            <h2 class="text-xl font-medium">Aufgabentypen</h2>
+            <PopButton color="gray" label="Erfassen" type="button" @click="openCreateModal"/>
+        </div>
 
 
-    <!-- List -->
-    <div class="p-2 pb-0.5 rounded-lg bg-gray-100 shadow-inner">
+        <!-- List -->
+        <div class="p-2 pb-0.5 rounded-lg bg-gray-100 shadow-inner">
 
-        <!-- No Content -->
-        <p v-if="todoTypes.length === 0" class="text-center text-sm text-gray-800 my-12">Es wurden noch keine
-            Aufgabentypen
-            erfasst...</p>
+            <!-- No Content -->
+            <p v-if="todoTypes.length === 0" class="text-center text-sm text-gray-800 my-12">Es wurden noch keine
+                Aufgabentypen
+                erfasst...</p>
 
-        <!-- List Items -->
-        <div v-for="todoType in todoTypes" :key="todoType.id"
-             class="rounded bg-white p-2 mb-2 shadow md:flex gap-2 group items-center">
-            <div class="mr-auto">
-                <p class="font-medium text-lg">
-                    <span :style="{color: todoType.color}" class="mr-1">■</span>
-                    <span v-text="todoType.name"/>
-                </p>
-                <p class="text-sm text-gray-600" v-text="todoType.description"/>
+            <!-- List Items -->
+            <div v-for="todoType in todoTypes" :key="todoType.id"
+                 class="rounded bg-white p-2 mb-2 shadow md:flex gap-2 group items-center">
+                <div class="mr-auto">
+                    <p class="font-medium text-lg">
+                        <span :style="{color: todoType.color}" class="mr-1">■</span>
+                        <span v-text="todoType.name"/>
+                    </p>
+                    <p class="text-sm text-gray-600" v-text="todoType.description"/>
+                </div>
+
+
+                <PopButton class="group-hover:opacity-100 opacity-0" color="gray" label="Bearbeiten" type="button"
+                           @click="editTodoType(todoType)"/>
+                <PopButton class="group-hover:opacity-100 opacity-0" color="red" label="Löschen" type="button"
+                           @click="deleteTodoType(todoType)"/>
             </div>
-
-
-            <PopButton class="group-hover:opacity-100 opacity-0" color="gray" label="Bearbeiten" type="button"
-                       @click="editTodoType(todoType)"/>
-            <PopButton class="group-hover:opacity-100 opacity-0" color="red" label="Löschen" type="button"
-                       @click="deleteTodoType(todoType)"/>
         </div>
     </div>
 
