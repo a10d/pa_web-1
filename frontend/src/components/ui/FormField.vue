@@ -14,12 +14,12 @@
             <span class="text-sm font-medium text-slate-800 cursor-pointer" v-text="label ?? name"/>
         </label>
     </div>
-    <label
-        :for="name"
-        class="block text-sm font-medium text-slate-800 px-2 mb-2 "
-        v-text="label ?? name"
-    />
     <div v-if="!isCheckboxLike" class="mb-4">
+        <label
+            :for="name"
+            class="block text-sm font-medium text-slate-800 px-2 mb-2 "
+            v-text="label ?? name"
+        />
         <input-field
             v-model:value="valueProxy"
             :disabled="disabled"
@@ -77,7 +77,9 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits<{
+    "update:modelValue": [value: string | number | boolean | object | null | any[]],
+}>();
 
 const valueProxy = computed({
     get: () => props.modelValue,

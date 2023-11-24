@@ -3,8 +3,7 @@
 import {Todo, TodoType, User} from "../../services/backend";
 import {computed} from "vue";
 import {useTodoStore} from "../../services/store/todo.ts";
-import * as moment from "moment/moment";
-import 'moment/locale/de-ch';
+import moment from '../../services/moment';
 import {useEventBus} from "../../services/eventBus";
 import UserAvatarList from "../ui/UserAvatarList.vue";
 
@@ -13,6 +12,10 @@ type ListTodoProps = {
 };
 
 const props = defineProps<ListTodoProps>();
+
+const emit = defineEmits<{
+    editTodo: [todo: Todo],
+}>();
 
 const store = useTodoStore();
 const eventBus = useEventBus();
@@ -27,20 +30,26 @@ const checkBoxProxy = computed({
         store.updateTodo({
             ...props.todo,
             completed,
-        })
+        });
     }
 });
 
 const todoType = computed<TodoType>(() => store.todoTypeById(props.todo.type));
 
-const assignees = computed<User[]>(() => props.todo.assignees
-    .map(id => store.users.find(user => user.id === id))
-    .filter(user => typeof user === 'object'));
+const assignees = computed<User[]>((): User[] => {
+    return props.todo.assignees
+        .map(id => store.users.find(user => user.id === id))
+        .filter(user => typeof user === 'object') as User[]
+});
 
-const dueDateReadable = computed<string>(() => moment(props.todo.dueDate).locale('de-ch').format('dddd, DD. MMMM YYYY'));
-const dueDateRelative = computed<string>(() => moment(props.todo.dueDate).locale('de-ch').fromNow());
+const dueDateReadable = computed<string>(() => moment(props.todo.dueDate).format('dddd, DD. MMMM YYYY'));
+const dueDateRelative = computed<string>(() => moment(props.todo.dueDate).fromNow());
 const isDueWarning = computed<boolean>(() => !props.todo.completed && moment(props.todo.dueDate)
     .subtract(todoType.value.reminderTime, 'days').isBefore(moment()));
+
+function editTodo() {
+    emit('editTodo', props.todo);
+}
 
 </script>
 
@@ -55,7 +64,7 @@ const isDueWarning = computed<boolean>(() => !props.todo.completed && moment(pro
                    type="checkbox"/>
         </div>
 
-        <div>
+        <div class="cursor-pointer select-none" @click="editTodo">
 
             <!-- Title -->
             <div class="px-2 py-1">
@@ -72,7 +81,7 @@ const isDueWarning = computed<boolean>(() => !props.todo.completed && moment(pro
 
 
             <!-- Details -->
-            <div class="pr-2">
+            <div class="pr-2 flex items-center gap-3">
                 <!-- Due Date -->
                 <span :class="{'bg-warning text-white font-bold shadow-sm': isDueWarning}"
                       :title="dueDateReadable"
@@ -81,13 +90,13 @@ const isDueWarning = computed<boolean>(() => !props.todo.completed && moment(pro
                 </span>
 
                 <!-- Type -->
-                <span class="inline-block ml-2 text-sm">
+                <span class="inline-block text-sm">
                       <span :style="{color: todoType.color}" class="mr-1">■</span>
                      <span class="font-medium" v-text="todoType.name"/>
                 </span>
 
                 <!-- Assignees -->
-                <UserAvatarList :users="assignees" class="ml-2"/>
+                <UserAvatarList :users="assignees"/>
             </div>
 
 
@@ -102,6 +111,7 @@ const isDueWarning = computed<boolean>(() => !props.todo.completed && moment(pro
 
         </div>
     </article>
+
 </template>
 
 <style scoped>

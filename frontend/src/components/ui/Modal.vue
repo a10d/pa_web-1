@@ -1,47 +1,10 @@
-<template>
-    <teleport to="body">
-        <transition leave-active-class="duration-200">
-            <div v-show="show" class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50" scroll-region>
-                <transition
-                    enter-active-class="ease-out duration-300"
-                    enter-from-class="opacity-0"
-                    enter-to-class="opacity-100 "
-                    leave-active-class="ease-in duration-200"
-                    leave-from-class="opacity-100"
-                    leave-to-class="opacity-0"
-                >
-                    <div v-show="show" class="fixed inset-0 transform transition-all" @click="close">
-                        <div class="absolute inset-0 bg-white/10 backdrop-blur-sm"/>
-                    </div>
-                </transition>
-
-                <transition
-                    enter-active-class="ease-out duration-300"
-                    enter-from-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    enter-to-class="opacity-100 translate-y-0 sm:scale-100"
-                    leave-active-class="ease-in duration-200"
-                    leave-from-class="opacity-100 translate-y-0 sm:scale-100"
-                    leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                >
-                    <div v-show="show"
-                         :class="maxWidthClass"
-                         class="mb-6 bg-white/80 backdrop-blur-xl rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full sm:mx-auto">
-                        <slot v-if="show"/>
-                    </div>
-                </transition>
-            </div>
-        </transition>
-    </teleport>
-</template>
-
-
 <script lang="ts" setup>
-import {computed, onMounted, onUnmounted, watch} from "vue";
+import {computed, nextTick, onMounted, onUnmounted, watch} from "vue";
 
 type ModalProps = {
     show: boolean;
-    maxWidth: "sm" | "md" | "lg" | "xl" | "2xl" | "4xl" | "6xl";
-    closeable: boolean;
+    maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl" | "4xl" | "6xl";
+    closeable?: boolean;
 }
 
 const props = withDefaults(
@@ -60,7 +23,7 @@ const emit = defineEmits<{
 
 watch(() => props.show, () => {
     if (props.show) {
-        emit("show");
+        nextTick().then(() => emit("show"));
         document.body.style.overflow = "hidden";
     } else {
         document.body.style.overflow = "auto";
@@ -98,3 +61,45 @@ const maxWidthClass = computed(() => {
     }[props.maxWidth];
 });
 </script>
+
+
+<template>
+    <teleport to="body">
+        <transition leave-active-class="duration-200">
+            <div v-show="show" class="fixed flex inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50" scroll-region>
+
+                <transition leave-active-class="transition duration-200">
+                    <div v-show="show" class="fixed inset-0 transform" @click="close">
+                        <transition
+                            enter-active-class="ease-out duration-300"
+                            enter-from-class="opacity-0"
+                            enter-to-class="opacity-100 "
+                            leave-active-class="ease-in duration-200"
+                            leave-from-class="opacity-100"
+                            leave-to-class="opacity-0"
+                        >
+                            <div v-show="show"
+                                 class="absolute inset-0 bg-white/10 backdrop-blur-md backdrop-saturate-0"/>
+                        </transition>
+                    </div>
+                </transition>
+
+
+                <transition
+                    enter-active-class="ease-out duration-300"
+                    enter-from-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    enter-to-class="opacity-100 translate-y-0 sm:scale-100"
+                    leave-active-class="ease-in duration-200"
+                    leave-from-class="opacity-100 translate-y-0 sm:scale-100"
+                    leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                >
+                    <div v-show="show"
+                         :class="maxWidthClass"
+                         class="border my-auto bg-white/80 backdrop-blur-xl rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full sm:mx-auto">
+                        <slot/>
+                    </div>
+                </transition>
+            </div>
+        </transition>
+    </teleport>
+</template>

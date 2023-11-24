@@ -16,7 +16,7 @@ type TodoFiltersProps = {
 const props = defineProps<TodoFiltersProps>();
 
 const emit = defineEmits<{
-    "update:modelValue": (value: TodoFilter) => void;
+    'update:modelValue': [value: TodoFilter],
 }>();
 
 const store = useTodoStore();
@@ -27,20 +27,19 @@ const todoTypes = computed(() => store.todoTypes);
 const todoTypesWithTodos = computed(() => todoTypes.value.filter(todoType => todos.value.some(({type}) => type === todoType.id)))
 
 function setFilter(filter: TodoFilter["filter"]) {
-    emit("update:modelValue", {
+    emit('update:modelValue', {
         filter,
-        todoType: undefined,
     });
 }
 
-function setFilterByTodoType(todoType: TodoFilter["todoType"]) {
-    emit("update:modelValue", {
-        filter: "type",
+function setFilterByTodoType(todoType: string) {
+    emit('update:modelValue', {
+        filter: 'type',
         todoType,
     });
 }
 
-function isType(todoType: TodoFilter["todoType"]) {
+function isType(todoType: string) {
     return props.modelValue.filter === "type" && props.modelValue.todoType === todoType;
 }
 

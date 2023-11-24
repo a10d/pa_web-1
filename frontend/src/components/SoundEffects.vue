@@ -9,7 +9,10 @@ import popSound from '../assets/sounds.mp3'
 
 const soundMap = {
     'todoCompleted': 'scratch',
-    'todoUncompleted': 'erase'
+    'todoUncompleted': 'erase',
+    'deleteTodo': 'whop',
+    'buttonClick': 'thud',
+    'submitTodoForm': 'ding',
 }
 
 const {play} = useSound(popSound, {
@@ -30,7 +33,7 @@ onMounted(() => play({id: 'ding', volume: 0.01,}));
 
 const eventBus = useEventBus();
 
-const soundsEnabled = useStorage('soundsEnabled', true);
+const soundsEnabled = useStorage('soundsEnabled', false);
 
 function toggleSounds() {
     soundsEnabled.value = !soundsEnabled.value;
@@ -45,10 +48,11 @@ eventBus.on('playSound', (soundEvent: string) => {
         return;
     }
 
+
     play({
         // @ts-ignore - Key is guarded, so stfu, dear typescript compiler
         id: soundMap[soundEvent],
-        volume: 0.4,
+        volume: 0.3,
         interrupt: true,
         sprite: true,
     });

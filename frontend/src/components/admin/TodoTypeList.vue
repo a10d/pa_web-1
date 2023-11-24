@@ -12,7 +12,6 @@ const store = useTodoStore();
 
 const todoTypes = computed(() => store.todoTypes);
 
-
 const createForm = reactive({
     name: "",
     description: "",
@@ -41,7 +40,7 @@ function cancelCreateModal() {
 }
 
 const isSubmitting = ref(false);
-const formError = ref<Error | null>(null);
+const formError = ref<any>(null);
 
 async function submitCreateForm() {
     isSubmitting.value = true;
@@ -160,9 +159,11 @@ async function submitEditForm() {
 
                 <FormField v-model="createForm.name" label="Name" name="name" required/>
                 <FormField v-model="createForm.description" label="Beschreibung" name="description" type="textarea"/>
-                <FormField v-model="createForm.color" label="Farbe" name="color" type="color"/>
-                <FormField v-model="createForm.reminderTime" :max="30" :min="1" label="Erinnerung (Tage)"
-                           name="reminderTime" type="number"/>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField v-model="createForm.color" label="Farbe" name="color" type="color"/>
+                    <FormField v-model="createForm.reminderTime" :max="30" :min="1" label="Erinnerung (Tage)"
+                               name="reminderTime" type="number"/>
+                </div>
             </fieldset>
 
             <div class="p-4 border-t bg-gray-50 flex justify-end gap-4 flex-wrap">
@@ -183,9 +184,12 @@ async function submitEditForm() {
 
                 <FormField v-model="editForm.name" label="Name" name="name" required/>
                 <FormField v-model="editForm.description" label="Beschreibung" name="description" type="textarea"/>
-                <FormField v-model="editForm.color" label="Farbe" name="color" type="color"/>
-                <FormField v-model="editForm.reminderTime" :max="30" :min="1" label="Frist (Tage)" name="reminderTime"
-                           type="number"/>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField v-model="editForm.color" label="Farbe" name="color" type="color"/>
+                    <FormField v-model="editForm.reminderTime" :max="30" :min="1" label="Frist (Tage)"
+                               name="reminderTime"
+                               type="number"/>
+                </div>
             </fieldset>
 
             <div class="p-4 border-t bg-gray-50 flex justify-end gap-4 flex-wrap">

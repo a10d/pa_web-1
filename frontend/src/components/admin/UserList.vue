@@ -38,7 +38,7 @@ function cancelCreateModal() {
 }
 
 const isSubmitting = ref(false);
-const formError = ref<Error | null>(null);
+const formError = ref<any>(null);
 
 async function submitCreateForm() {
     isSubmitting.value = true;
@@ -46,7 +46,7 @@ async function submitCreateForm() {
     try {
         await store.createUser(createForm);
         cancelCreateModal();
-    } catch (e) {
+    } catch (e: any) {
         formError.value = e;
     } finally {
         isSubmitting.value = false;
@@ -56,7 +56,7 @@ async function submitCreateForm() {
 async function deleteUser(user: User) {
     try {
         await store.deleteUser(user);
-    } catch (e) {
+    } catch (e: any) {
         useErrorHandler().handle(e);
     }
 }
@@ -95,7 +95,7 @@ async function submitEditForm() {
             ...editForm,
         } as User);
         cancelEditingUser();
-    } catch (e) {
+    } catch (e: any) {
         formError.value = e;
     } finally {
         isSubmitting.value = false;
@@ -144,8 +144,10 @@ async function submitEditForm() {
             <fieldset :disabled="isSubmitting" class="p-4">
                 <h2 class="text-xl font-medium mb-4">Person erfassen</h2>
                 <FormErrors :error="formError"/>
-                <FormField v-model="createForm.firstName" label="Vorname" name="firstName" required/>
-                <FormField v-model="createForm.lastName" label="Nachname" name="name" required/>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField v-model="createForm.firstName" label="Vorname" name="firstName" required/>
+                    <FormField v-model="createForm.lastName" label="Nachname" name="name" required/>
+                </div>
                 <FormField v-model="createForm.email" label="E-Mail" name="email" required type="email"/>
             </fieldset>
 
@@ -163,8 +165,11 @@ async function submitEditForm() {
             <fieldset :disabled="isSubmitting" class="p-4">
                 <h2 class="text-xl font-medium mb-4">Person bearbeiten</h2>
                 <FormErrors :error="formError"/>
-                <FormField v-model="editForm.firstName" label="Vorname" name="firstName" required/>
-                <FormField v-model="editForm.lastName" label="Nachname" name="name" required/>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField v-model="editForm.firstName" label="Vorname" name="firstName" required/>
+                    <FormField v-model="editForm.lastName" label="Nachname" name="name" required/>
+                </div>
+
                 <FormField v-model="editForm.email" label="E-Mail" name="email" required type="email"/>
             </fieldset>
 

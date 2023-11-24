@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 
+import {useEventBus} from "../../services/eventBus";
+
 type PopButtonProps = {
     label?: string;
     type?: "submit" | "button";
@@ -14,10 +16,19 @@ const props = withDefaults(defineProps<PopButtonProps>(), {
     disabled: false,
 });
 
+const emit = defineEmits<{
+    click: [];
+}>();
+
+function onButtonClick() {
+    emit('click');
+
+    useEventBus().emit('playSound', 'buttonClick', {color: props.color});
+}
 </script>
 
 <template>
-    <button :class="['boettong', props.color]" :disabled="disabled" :type="type">
+    <button :class="['boettong', props.color]" :disabled="disabled" :type="type" @click="onButtonClick">
         <span v-if="label" v-text="label"/>
         <slot v-else/>
     </button>

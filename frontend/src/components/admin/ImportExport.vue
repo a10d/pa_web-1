@@ -4,6 +4,7 @@ import PopButton from "../ui/PopButton.vue";
 import {useBackend} from "../../services/backend";
 import {useTodoStore} from "../../services/store/todo.ts";
 import {ref} from "vue";
+import {useErrorHandler} from "../../services/errorHandler";
 
 const store = useTodoStore();
 const backend = useBackend();
@@ -40,8 +41,8 @@ async function importData(data: string | ArrayBuffer | undefined) {
 
         await backend.importData(data);
         await store.initialize();
-    } catch (e) {
-        // Todo: Handle error
+    } catch (e: any) {
+        useErrorHandler().handle(e);
     }
     isWorking.value = false;
 }
@@ -87,7 +88,7 @@ async function downloadExport() {
             Zuvor exportierte Daten können hier importiert werden.<br/>
             <span class="text-red-800 font-bold">Beim Importieren werden alle vorhandenen Daten gelöscht!</span>
         </p>
-        <PopButton color="amber" @click="openImport">Datei wählen...</PopButton>
+        <PopButton :disabled="isWorking" color="amber" @click="openImport">Datei wählen...</PopButton>
     </div>
 
     <!-- Export -->
@@ -97,7 +98,7 @@ async function downloadExport() {
             Hier kannst du deine Daten exportieren.<br/>
             Du erhältst eine JSON-Datei mit allen deinen Daten.
         </p>
-        <PopButton color="green" @click="downloadExport">Herunterladen</PopButton>
+        <PopButton :disabled="isWorking" color="green" @click="downloadExport">Herunterladen</PopButton>
     </div>
 
 </template>

@@ -55,6 +55,19 @@
         :type="type"
         @input="onCheckboxInput"
     />
+    <div v-else-if="type === 'color'" :class="inputClasses" class="relative h-[42px]">
+        <div :style="{backgroundColor: value}"
+             class="absolute inset-1 rounded shadow-inner shadow border border-black/30"/>
+        <input
+            :disabled="disabled"
+            :required="required"
+            :value="value"
+            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+            type="color"
+            @input="onInput"
+        />
+    </div>
+
     <input
         v-else
         :id="name"
@@ -80,9 +93,9 @@ export interface SelectOption {
 type InputFieldProps = {
     name: string;
     type: "text" | "number" | "textarea" | "select" | "file" | string;
-    required: boolean;
-    disabled: boolean;
-    multiple: boolean;
+    required?: boolean;
+    disabled?: boolean;
+    multiple?: boolean;
     selectOptions?: SelectOption[];
     value: string | number | boolean | object | any[] | null;
 };
@@ -98,7 +111,9 @@ withDefaults(
     },
 );
 
-const emit = defineEmits(["update:value"]);
+const emit = defineEmits<{
+    'update:value': [value: string | number | boolean | object | any[] | null],
+}>();
 
 const onInput = (e: any) => emit("update:value", e.target.value);
 

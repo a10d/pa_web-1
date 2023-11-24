@@ -8,7 +8,7 @@ type UserAvatarListProps = {
     users: User[],
 };
 
-const maxVisibleUsers = 3;
+const maxVisibleUsers = 4;
 
 const props = defineProps<UserAvatarListProps>();
 

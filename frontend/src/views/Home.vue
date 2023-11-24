@@ -9,22 +9,26 @@ import TodoFilters, {TodoFilter} from "../components/todo/TodoFilters.vue";
 import {useEventBus} from "../services/eventBus";
 import TodoEditOptions from "../components/todo/TodoEditOptions.vue";
 import NoContentFiller from "../components/todo/NoContentFiller.vue";
+import {Todo} from "../services/backend";
+import TodoEditModal from "../components/todo/TodoEditModal.vue";
 
 const eventBus = useEventBus();
 const store = useTodoStore();
 
-const todos = computed(() => store.todos.filter(todo => {
-    switch (filter.value.filter) {
-        case 'all':
-            return true;
-        case 'completed':
-            return todo.completed;
-        case 'uncompleted':
-            return !todo.completed;
-        case 'type':
-            return todo.type === filter.value.todoType;
-    }
-}));
+const todos = computed(() => store.todos
+    .filter(todo => {
+        switch (filter.value.filter) {
+            case 'all':
+                return true;
+            case 'completed':
+                return todo.completed;
+            case 'uncompleted':
+                return !todo.completed;
+            case 'type':
+                return todo.type === filter.value.todoType;
+        }
+    })
+    .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()));
 
 const filter = ref<TodoFilter>({
     filter: 'uncompleted',
@@ -36,6 +40,16 @@ eventBus.on('createTodo', (todo) => {
         filter.value = {filter: 'uncompleted'}
     }
 });
+
+const editingTodo = ref<null | Todo>(null);
+
+function editTodo(todo: Todo) {
+    editingTodo.value = todo;
+}
+
+function closeEditTodo() {
+    editingTodo.value = null;
+}
 
 </script>
 
@@ -59,7 +73,8 @@ eventBus.on('createTodo', (todo) => {
                 <ListTodo
                     v-for="todo in todos"
                     :key="todo.id"
-                    :todo="todo"/>
+                    :todo="todo"
+                    @editTodo="editTodo"/>
 
             </transition-group>
 
@@ -68,6 +83,9 @@ eventBus.on('createTodo', (todo) => {
             <TodoEditOptions/>
 
         </section>
+
+        <TodoEditModal :todo="editingTodo"
+                       @close="closeEditTodo"/>
 
     </AppLayout>
 

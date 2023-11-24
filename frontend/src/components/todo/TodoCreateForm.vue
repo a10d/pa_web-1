@@ -5,9 +5,9 @@ import FormField from "../ui/FormField.vue";
 import PopButton from "../ui/PopButton.vue";
 import {useTodoStore} from "../../services/store/todo.ts";
 import {useEventBus} from "../../services/eventBus";
-import UserAvatar from "../ui/UserAvatar.vue";
 import {useErrorHandler} from "../../services/errorHandler";
 import FormErrors from "../ui/FormErrors.vue";
+import TodoAssigneesField from "./TodoAssigneesField.vue";
 
 const eventBus = useEventBus();
 const store = useTodoStore();
@@ -16,8 +16,6 @@ const selectableTodoTypes = computed(() => store.todoTypes.map((type) => ({
     value: type.id,
     label: type.name,
 })));
-
-const selectableAssignees = computed(() => store.users);
 
 const formDisabled = computed(() => isSubmitting.value || selectableTodoTypes.value.length === 0);
 
@@ -35,7 +33,7 @@ const todoForm = reactive<{
     assignees: [],
 });
 
-const formError = ref<Error | null>(null);
+const formError = ref<any>(null);
 const isSubmitting = ref(false);
 const formVisible = ref(false);
 
@@ -127,7 +125,7 @@ async function submitForm() {
                         name="title"
                         required
                     />
-                    
+
                     <!-- Description -->
                     <FormField
                         v-model="todoForm.description"
@@ -138,45 +136,28 @@ async function submitForm() {
                         type="textarea"
                     />
 
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <!-- DueDate -->
-                        <div class="col-span-2 sm:col-span-1">
-                            <FormField v-model="todoForm.dueDate"
-                                       label="Fällig am"
-                                       name="dueDate"
-                                       required
-                                       type="date"/>
-                        </div>
+                        <FormField v-model="todoForm.dueDate"
+                                   label="Fällig am"
+                                   name="dueDate"
+                                   required
+                                   type="date"/>
 
                         <!-- TodoType -->
-                        <div class="col-span-2 sm:col-span-1">
-                            <FormField v-model="todoForm.type"
-                                       :select-options="selectableTodoTypes"
-                                       label="Aufgabentyp"
-                                       name="todoType"
-                                       required
-                                       type="select"/>
-                        </div>
+                        <FormField v-model="todoForm.type"
+                                   :select-options="selectableTodoTypes"
+                                   label="Aufgabentyp"
+                                   name="todoType"
+                                   required
+                                   type="select"/>
 
                     </div>
 
 
                     <!-- Assignees -->
                     <label class="block text-sm font-medium text-slate-800 px-2 mb-2">Zugewiesen an</label>
-                    <div
-                        class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 p-2 border rounded-md shadow-sm bg-white border-gray-300 focus-within:ring">
-                        <label v-for="user in selectableAssignees" :key="user.id"
-                               :class="{'bg-blue-500 text-white': todoForm.assignees.includes(user.id)}"
-                               class="relative flex group focus-within:ring items-center rounded-full p-2 select-none">
-
-                            <input v-model="todoForm.assignees" :value="user.id"
-                                   class="opacity-0 absolute inset-0 cursor-pointer" type="checkbox">
-
-                            <UserAvatar :user="user" class="w-8 h-8 mr-2"/>
-                            <span class="font-medium text-sm" v-text="`${user.firstName} ${user.lastName}`"/>
-
-                        </label>
-                    </div>
+                    <TodoAssigneesField v-model="todoForm.assignees"/>
 
                 </fieldset>
 
