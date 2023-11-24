@@ -1,17 +1,17 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 
 </script>
 
 <template>
     <button class="inline-button">
-        <slot />
+        <slot/>
     </button>
 </template>
 
 <style scoped>
 
 .inline-button {
-    @apply rounded-full font-medium border bg-white px-2 py-1 text-sm transition-all mr-2 mb-2;
+    @apply rounded-full font-medium border bg-white px-3 py-1 text-sm transition-all mr-2 mb-2;
 }
 
 .inline-button:hover {
