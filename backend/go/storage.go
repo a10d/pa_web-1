@@ -2,8 +2,10 @@ package main
 
 import (
 	"database/sql"
+    "fmt"
 	"log"
 	"os"
+    "strings"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -75,22 +77,26 @@ func (s *SqliteStorage) migrate() error {
 func (s *SqliteStorage) GetTodos() ([]*Todo, error) {
 
 	rows, err := s.db.Query(`
-    select
-        todos.id,
-        todos.title,
-        todos.description,
-        todos.dueDate,
-        todos.completed,
-        todoTypes.id as typeId,
-        todoTypes.name as typeName,
-        todoTypes.description as typeDescription,
-        todoTypes.color as typeColor,
-        todoTypes.reminderTime as typeReminderTime
-    from todos
-        left join todoTypes on todoTypes.id = todos.todoTypeId
-        join todoAssignees on todoAssignees.todoId = todos.id
-        join users on users.id = todoAssignees.userId
-    order by todos.dueDate `)
+        select
+            todos.id,
+            todos.title,
+            todos.description,
+            todos.dueDate,
+            todos.completed,
+            todos.createdAt,
+            todos.updatedAt,
+            todoTypes.id as type_id,
+            todoTypes.name as type_name,
+            todoTypes.description as type_description,
+            todoTypes.color as type_color,
+            todoTypes.reminderTime as type_reminderTime,
+            todoTypes.createdAt as type_createdAt,
+            todoTypes.updatedAt as type_updatedAt,
+            group_concat(tA.userId) as assigneeIds
+        from todos
+            left join todoTypes on todoTypes.id = todos.todoTypeId
+            join todoAssignees tA on todos.id = tA.todoId
+        order by todos.dueDate `)
 
 	if err != nil {
 		return nil, err
@@ -100,36 +106,105 @@ func (s *SqliteStorage) GetTodos() ([]*Todo, error) {
 
 	for rows.Next() {
 
-		var todo Todo
+        todo := new(Todo)
+        todo.Type = new(TodoType)
+        todo.Assignees = make([]*User, 0)
+
+        assigneeIds := ""
 
 		if err = rows.Scan(
-			&todo.ID,
-			&todo.Title,
-			&todo.Description,
-			&todo.DueDate,
-			&todo.Completed,
-			&todo.Type.ID,
-			&todo.Type.Name,
-			&todo.Type.Description,
-			&todo.Type.Color,
-			&todo.Type.ReminderTime,
-		); err != nil {
-			return nil, err
-		}
+            &todo.ID,
+            &todo.Title,
+            &todo.Description,
+            &todo.DueDate,
+            &todo.Completed,
+            &todo.CreatedAt,
+            &todo.UpdatedAt,
 
-		todos = append(todos, &todo)
-	}
+            &todo.Type.ID,
+            &todo.Type.Name,
+            &todo.Type.Description,
+            &todo.Type.Color,
+            &todo.Type.ReminderTime,
+            &todo.Type.CreatedAt,
+            &todo.Type.UpdatedAt,
 
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
+            &assigneeIds,
+        ); err != nil {
+            return nil, err
+        }
 
-	return todos, rows.Close()
+        todo.Assignees, err = s.GetUsersByIds(strings.Split(assigneeIds, ","))
+
+        if err != nil {
+            return nil, err
+        }
+
+        todos = append(todos, todo)
+    }
+
+    if err := rows.Err(); err != nil {
+        return nil, err
+    }
+
+    return todos, rows.Close()
 }
 
 func (s *SqliteStorage) GetTodoById(id string) (*Todo, error) {
 
-	return nil, nil
+    var todo Todo
+
+    var assigneeIds string
+
+    result := s.db.QueryRow(`
+        select
+            todos.id,
+            todos.title,
+            todos.description,
+            todos.dueDate,
+            todos.completed,
+            todos.createdAt,
+            todos.updatedAt,
+            todoTypes.id as type_id,
+            todoTypes.name as type_name,
+            todoTypes.description as type_description,
+            todoTypes.color as type_color,
+            todoTypes.reminderTime as type_reminderTime,
+            todoTypes.createdAt as type_createdAt,
+            todoTypes.updatedAt as type_updatedAt,
+            group_concat(users.id) as assigneeIds
+        from todos
+            left join todoTypes on todoTypes.id = todos.todoTypeId
+            join todoAssignees on todoAssignees.todoId = todos.id
+            join users on users.id = todoAssignees.userId
+        where todos.id = ?;`,
+        id,
+    )
+
+    if err := result.Scan(
+        &todo.ID,
+        &todo.Title,
+        &todo.Description,
+        &todo.DueDate,
+        &todo.Completed,
+        &todo.CreatedAt,
+        &todo.UpdatedAt,
+
+        &todo.Type.ID,
+        &todo.Type.Name,
+        &todo.Type.Description,
+        &todo.Type.Color,
+        &todo.Type.ReminderTime,
+        &todo.Type.CreatedAt,
+        &todo.Type.UpdatedAt,
+        
+        &assigneeIds,
+    ); err != nil {
+        return nil, err
+    }
+
+    return &todo, nil
+
 }
 
 func (s *SqliteStorage) CreateTodo(todo *Todo) (*Todo, error) {
@@ -137,14 +212,56 @@ func (s *SqliteStorage) CreateTodo(todo *Todo) (*Todo, error) {
 }
 
 func (s *SqliteStorage) UpdateTodo(todo *Todo) (*Todo, error) {
-	return todo, nil
+
+    _, err := s.db.Exec(`
+        update todos set
+            todoTypeId = ?,
+            title = ?,
+            description = ?,
+            dueDate = ?,
+            completed = ?
+        where id = ?;`,
+        todo.Type.ID,
+        todo.Title,
+        todo.Description,
+        todo.DueDate,
+        todo.Completed,
+        todo.ID,
+    )
+
+    if err != nil {
+        return nil, err
+    }
+
+    return s.GetTodoById(todo.ID)
 }
 
 func (s *SqliteStorage) DeleteTodo(todo *Todo) error {
-	return nil
+
+    _, err := s.db.Exec(`delete from todos where id = ?`, todo.ID)
+
+    return err
 }
 
-func rowsToTodoTypes(rows *sql.Rows) ([]*TodoType, error) {
+func (s *SqliteStorage) GetTodoTypes() ([]*TodoType, error) {
+
+    rows, err := s.db.Query(`
+        select
+            id,
+            name,
+            description,
+            color,
+            reminderTime,
+            createdAt,
+            updatedAt
+        from todoTypes
+        order by name;
+    `)
+
+    if err != nil {
+        return nil, err
+    }
+
     todoTypes := make([]*TodoType, 0)
 
     for rows.Next() {
@@ -165,35 +282,102 @@ func rowsToTodoTypes(rows *sql.Rows) ([]*TodoType, error) {
         todoTypes = append(todoTypes, &todoType)
     }
 
-    return todoTypes, rows.Err()
-}
+    if err := rows.Err(); err != nil {
+        return nil, err
+    }
 
-func (s *SqliteStorage) GetTodoTypes() ([]*TodoType, error) {
-	return nil, nil
+    return todoTypes, rows.Close()
 }
 
 func (s *SqliteStorage) GetTodoTypeById(id string) (*TodoType, error) {
-	return nil, nil
+
+    var todoType TodoType
+
+    result := s.db.QueryRow(`
+        select
+            id,
+            name,
+            description,
+            color,
+            reminderTime,
+            createdAt,
+            updatedAt
+        from todoTypes
+        where id = ?;`,
+        id,
+    )
+
+    if err := result.Scan(
+        &todoType.ID,
+        &todoType.Name,
+        &todoType.Description,
+        &todoType.Color,
+        &todoType.ReminderTime,
+        &todoType.CreatedAt,
+        &todoType.UpdatedAt,
+    ); err != nil {
+        return nil, err
+    }
+
+    return &todoType, nil
 }
 
 func (s *SqliteStorage) CreateTodoType(todoType *TodoType) (*TodoType, error) {
-	return todoType, nil
+
+    _, err := s.db.Exec(`
+        insert into todoTypes (id, name, description, color, reminderTime)
+        values (?, ?, ?, ?, ?);`,
+        todoType.ID,
+        todoType.Name,
+        todoType.Description,
+        todoType.Color,
+        todoType.ReminderTime,
+    )
+
+    if err != nil {
+        return nil, err
+    }
+
+    return s.GetTodoTypeById(todoType.ID)
 }
 
 func (s *SqliteStorage) UpdateTodoType(todoType *TodoType) (*TodoType, error) {
-	return todoType, nil
+
+    _, err := s.db.Exec(`
+        update todoTypes set
+            name = ?,
+            description = ?,
+            color = ?,
+            reminderTime = ?
+        where id = ?;`,
+        todoType.Name,
+        todoType.Description,
+        todoType.Color,
+        todoType.ReminderTime,
+        todoType.ID,
+    )
+
+    if err != nil {
+        return nil, err
+    }
+
+    return s.GetTodoTypeById(todoType.ID)
 }
 
 func (s *SqliteStorage) DeleteTodoType(todoType *TodoType) error {
-	_, err := s.db.Exec(`delete from todoTypes where id = ?`, todoType.ID)
-	return err
+
+    _, err := s.db.Exec(`delete from todoTypes where id = ?;`, todoType.ID)
+
+    return err
 }
 
 func rowsToUsers(rows *sql.Rows) ([]*User, error) {
+
 	users := make([]*User, 0)
 
 	for rows.Next() {
-		var user User
+
+        user := new(User)
 
 		if err := rows.Scan(
 			&user.ID,
@@ -206,13 +390,14 @@ func rowsToUsers(rows *sql.Rows) ([]*User, error) {
 			return nil, err
 		}
 
-		users = append(users, &user)
+        users = append(users, user)
 	}
 
 	return users, rows.Err()
 }
 
 func (s *SqliteStorage) GetUsers() ([]*User, error) {
+
 	rows, err := s.db.Query(`
         select
             id,
@@ -222,7 +407,7 @@ func (s *SqliteStorage) GetUsers() ([]*User, error) {
             createdAt,
             updatedAt
         from users
-        order by lastName, firstName
+        order by lastName, firstName;
     `)
 
 	if err != nil {
@@ -241,7 +426,7 @@ func (s *SqliteStorage) GetUsers() ([]*User, error) {
 
 func (s *SqliteStorage) GetUserById(id string) (*User, error) {
 
-	result := s.db.QueryRow(`select * from users where id = ?`, id)
+    result := s.db.QueryRow(`select * from users where id = ?;`, id)
 
 	var user User
 
@@ -261,8 +446,7 @@ func (s *SqliteStorage) GetUserById(id string) (*User, error) {
 
 func (s *SqliteStorage) GetUsersByIds(ids []string) ([]*User, error) {
 
-	rows, err := s.db.Query(`
-        select
+    query := fmt.Sprintf(`select
             id,
             firstName,
             lastName,
@@ -270,32 +454,40 @@ func (s *SqliteStorage) GetUsersByIds(ids []string) ([]*User, error) {
             createdAt,
             updatedAt
         from users
-        where users.id in (?)
-    `, ids)
+        where users.id in ( %s );`,
+        "?"+strings.Repeat(", ?", len(ids)-1),
+    )
+
+    args := make([]interface{}, len(ids))
+
+    for i, id := range ids {
+        args[i] = id
+    }
+
+    rows, err := s.db.Query(query, args...)
 
 	if err != nil {
 		return nil, err
 	}
 
-	defer func(rows *sql.Rows) {
-		err := rows.Close()
-		if err != nil {
-			log.Println("Error closing rows: ", err)
-		}
-	}(rows)
+    users, err := rowsToUsers(rows)
 
-	return rowsToUsers(rows)
+    if err != nil {
+        return nil, err
+    }
+
+    return users, rows.Close()
 }
 
 func (s *SqliteStorage) CreateUser(user *User) (*User, error) {
 
 	_, err := s.db.Exec(`
         insert into users (id, firstName, lastName, email)
-        values (?, ?, ?, ?)`,
-		user.ID,
-		user.FirstName,
-		user.LastName,
-		user.Email)
+        values (?, ?, ?, ?);`,
+        &user.ID,
+        &user.FirstName,
+        &user.LastName,
+        &user.Email)
 
 	if err != nil {
 		return nil, err
@@ -311,11 +503,11 @@ func (s *SqliteStorage) UpdateUser(user *User) (*User, error) {
             firstName = ?,
             lastName = ?,
             email = ?
-        where id = ?`,
-		user.FirstName,
-		user.LastName,
-		user.Email,
-		user.ID)
+        where id = ?;`,
+        &user.FirstName,
+        &user.LastName,
+        &user.Email,
+        &user.ID)
 
 	if err != nil {
 		return nil, err
@@ -328,8 +520,8 @@ func (s *SqliteStorage) DeleteUser(user *User) error {
 
 	_, err := s.db.Exec(`
         delete from users
-        where id = ? `,
-		user.ID)
+        where id = ?;`,
+        &user.ID)
 
 	return err
 }
