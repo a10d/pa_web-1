@@ -76,7 +76,7 @@ async function downloadExport() {
     </transition>
 
     <!-- Title -->
-    <div class=" sticky top-0 bg-white/80 backdrop-blur-sm py-6">
+    <div class=" sticky top-0 bg-white/80 backdrop-blur-sm py-6 border-b border-white z-40">
         <h2 class="text-xl font-medium">Datenimport und -export</h2>
     </div>
 

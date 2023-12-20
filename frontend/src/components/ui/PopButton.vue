@@ -23,6 +23,7 @@ const emit = defineEmits<{
 function onButtonClick() {
     emit('click');
 
+    // @ts-ignore
     useEventBus().emit('playSound', 'buttonClick', {color: props.color});
 }
 </script>

@@ -115,7 +115,7 @@ async function submitEditForm() {
 
     <div class="relative">
         <!-- Header -->
-        <div class="flex items-center justify-between gap-2 sticky top-0 py-4 bg-white/80 backdrop-blur-sm">
+        <div class="flex items-center justify-between gap-2 sticky top-0 py-4 bg-white/80 backdrop-blur-sm border-b border-white z-40">
             <h2 class="text-xl font-medium">Aufgabentypen</h2>
             <PopButton color="gray" label="Erfassen" type="button" @click="openCreateModal"/>
         </div>

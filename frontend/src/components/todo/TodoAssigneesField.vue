@@ -28,7 +28,8 @@ const users = computed(() => useTodoStore().users);
         :class="{'bg-gray-100': users.length === 0, 'bg-white': users.length > 0}"
         class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 p-2 border rounded-md shadow-sm border-gray-300 focus-within:ring">
 
-        <div v-if="users.length === 0" class="text-center text-sm text-gray-500 my-6 sm:col-span-2">Es wurden noch keine Personen
+        <div v-if="users.length === 0" class="text-center text-sm text-gray-500 my-6 sm:col-span-2">Es wurden noch keine
+            Personen
             erfasst...
         </div>
 

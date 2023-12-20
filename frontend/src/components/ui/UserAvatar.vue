@@ -29,7 +29,7 @@ const userColor = computed(() => {
 </script>
 
 <template>
-    <div class="aspect-square rounded-full shadow-inner bg-white inline-flex relative select-none">
+    <div class="aspect-square rounded-full shadow-inner bg-white inline-flex relative select-none z-10">
         <div :style="{backgroundColor: userColor}" class="absolute inset-0 rounded-full opacity-60 z-0"/>
         <span class="text-black/30 m-auto z-20" v-text="initials"/>
     </div>

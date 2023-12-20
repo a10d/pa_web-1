@@ -3,9 +3,9 @@
 import {Todo, TodoType, User} from "../../services/backend";
 import {computed} from "vue";
 import {useTodoStore} from "../../services/store/todo.ts";
-import moment from '../../services/moment';
 import {useEventBus} from "../../services/eventBus";
 import UserAvatarList from "../ui/UserAvatarList.vue";
+import {useMoment} from "../../services/moment";
 
 type ListTodoProps = {
     todo: Todo,
@@ -17,6 +17,7 @@ const emit = defineEmits<{
     editTodo: [todo: Todo],
 }>();
 
+const moment = useMoment();
 const store = useTodoStore();
 const eventBus = useEventBus();
 

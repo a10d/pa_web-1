@@ -56,7 +56,7 @@
         @input="onCheckboxInput"
     />
     <div v-else-if="type === 'color'" :class="inputClasses" class="relative h-[42px]">
-        <div :style="{backgroundColor: value}"
+        <div :style="{backgroundColor: `${value}`}"
              class="absolute inset-1 rounded shadow-inner shadow border border-black/30"/>
         <input
             :disabled="disabled"
