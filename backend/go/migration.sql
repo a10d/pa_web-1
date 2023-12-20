@@ -27,13 +27,22 @@ begin
     where id = new.id;
 end;
 
+create trigger if not exists users_deleteTrigger
+    after delete
+    on users
+begin
+    delete
+    from todoAssignees
+    where userId = old.id;
+end;
+
 create table if not exists todoTypes
 (
     id           char(36)     not null primary key,
     name         varchar(255) not null,
     description  text         not null,
     color        varchar(100) not null,
-    reminderTime datetime     not null,
+    reminderTime int          not null,
     createdAt    datetime,
     updatedAt    datetime
 );
@@ -63,7 +72,7 @@ create table if not exists todos
     todoTypeId  char(36)     not null,
     title       varchar(255) not null,
     description text         not null,
-    dueDate     text         not null,
+    dueDate     datetime     not null,
     completed   integer(1)   not null default 0,
     createdAt   datetime,
     updatedAt   datetime,
@@ -89,34 +98,20 @@ begin
     where id = new.id;
 end;
 
+create trigger if not exists todos_deleteTrigger
+    after delete
+    on todos
+begin
+    delete
+    from todoAssignees
+    where todoId = old.id;
+end;
+
 create table if not exists todoAssignees
 (
-    todoId    char(36) not null,
-    userId    char(36) not null,
-    createdAt datetime,
-    updatedAt datetime,
+    todoId char(36) not null,
+    userId char(36) not null,
     primary key (todoId, userId),
     foreign key (todoId) references todos (id),
     foreign key (userId) references users (id)
 );
-
-create trigger if not exists todoAssignees_updateTrigger
-    after update
-    on todoAssignees
-begin
-    update todoAssignees
-    set updatedAt = datetime('now')
-    where todoId = new.todoId
-      and userId = new.userId;
-end;
-
-create trigger if not exists todoAssignees_createTrigger
-    after insert
-    on todoAssignees
-begin
-    update todoAssignees
-    set createdAt = datetime('now'),
-        updatedAt = datetime('now')
-    where todoId = new.todoId
-      and userId = new.userId;
-end;
