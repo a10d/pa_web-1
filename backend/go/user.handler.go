@@ -3,13 +3,28 @@ package main
 import (
     "encoding/json"
     "github.com/gorilla/mux"
+    "github.com/thedevsaddam/govalidator"
     "net/http"
+    "net/url"
 )
 
 type userInput struct {
     FirstName string `json:"firstName"`
     LastName  string `json:"lastName"`
     Email     string `json:"email"`
+}
+
+func (input *userInput) validate() url.Values {
+
+    return govalidator.New(govalidator.Options{
+        Data: input,
+        Rules: govalidator.MapData{
+            "firstName": []string{"min:1", "max:255"},
+            "lastName":  []string{"min:1", "max:255"},
+            "email":     []string{"email"},
+        },
+        RequiredDefault: true,
+    }).ValidateStruct()
 }
 
 func (s *APIServer) handleGetUsers(w http.ResponseWriter, r *http.Request) error {
@@ -31,7 +46,11 @@ func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) err
         return err
     }
 
-    // TODO: Handle validation
+    e := input.validate()
+
+    if len(e) > 0 {
+        return writeValidationError(w, e)
+    }
 
     user, err := s.store.CreateUser(NewUser(
         input.FirstName,
@@ -70,7 +89,11 @@ func (s *APIServer) handleUpdateUser(w http.ResponseWriter, r *http.Request) err
         return err
     }
 
-    // TODO: Handle validation
+    e := input.validate()
+
+    if len(e) > 0 {
+        return writeValidationError(w, e)
+    }
 
     user.FirstName = input.FirstName
     user.LastName = input.LastName

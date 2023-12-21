@@ -3,7 +3,9 @@ package main
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
+    "github.com/thedevsaddam/govalidator"
 	"net/http"
+    "net/url"
 )
 
 type todoTypeInput struct {
@@ -11,6 +13,20 @@ type todoTypeInput struct {
 	Description  string `json:"description"`
 	Color        string `json:"color"`
 	ReminderTime int    `json:"reminderTime"`
+}
+
+func (input *todoTypeInput) validate() url.Values {
+
+    return govalidator.New(govalidator.Options{
+        Data: input,
+        Rules: govalidator.MapData{
+            "name":         []string{"min:1", "max:255"},
+            "description":  []string{"min:1", "max:3000"},
+            "color":        []string{"css_color"},
+            "reminderTime": []string{"numeric_between:1,60"},
+        },
+        RequiredDefault: true,
+    }).ValidateStruct()
 }
 
 func (s *APIServer) handleGetTodoTypes(w http.ResponseWriter, r *http.Request) error {
@@ -32,7 +48,11 @@ func (s *APIServer) handleCreateTodoType(w http.ResponseWriter, r *http.Request)
 		return err
 	}
 
-	// TODO: Handle validation
+    e := input.validate()
+
+    if len(e) > 0 {
+        return writeValidationError(w, e)
+    }
 
 	todoType, err := s.store.CreateTodoType(NewTodoType(
 		input.Name,
@@ -73,7 +93,11 @@ func (s *APIServer) handleUpdateTodoType(w http.ResponseWriter, r *http.Request)
 		return err
 	}
 
-	// TODO: Handle validation
+    e := input.validate()
+
+    if len(e) > 0 {
+        return writeValidationError(w, e)
+    }
 
 	todoType.Name = input.Name
 	todoType.Description = input.Description
