@@ -77,7 +77,7 @@ func (s *APIServer) registerCustomValidationRules() {
         return nil
     })
 
-    govalidator.AddCustomRule("afterToday", func(field string, rule string, message string, value interface{}) error {
+    govalidator.AddCustomRule("datetimeAfterNow", func(field string, rule string, message string, value interface{}) error {
 
         date, err := time.Parse(time.RFC3339, value.(string))
         if err != nil {
@@ -165,9 +165,11 @@ type apiError struct {
 }
 
 func makeServeHandleFunc(f apiFunc) http.HandlerFunc {
-
     return func(w http.ResponseWriter, r *http.Request) {
+        t := time.Now().Format(time.TimeOnly)
+        fmt.Printf("%s | \033[0;31m%s\033[0m  \t| %s\n", t, r.Method, r.RequestURI)
 		if err := f(w, r); err != nil {
+            fmt.Printf("%s | \033[0;31m\t\t  err: %s\u001B[0m\n", t, err.Error())
 			err := writeJSON(w, http.StatusInternalServerError, apiError{Error: err.Error()})
 			if err != nil {
 				return

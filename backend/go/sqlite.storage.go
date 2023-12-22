@@ -1,12 +1,12 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
-	_ "github.com/mattn/go-sqlite3"
-	"log"
-	"os"
-	"strings"
+    "database/sql"
+    "fmt"
+    "log"
+    _ "modernc.org/sqlite"
+    "os"
+    "strings"
 )
 
 type SqliteStorage struct {
@@ -15,7 +15,7 @@ type SqliteStorage struct {
 
 func NewSqliteStorage(databaseName string) (*SqliteStorage, error) {
 
-	db, err := sql.Open("sqlite3", databaseName)
+    db, err := sql.Open("sqlite", databaseName)
 
 	if err != nil {
 		return nil, err

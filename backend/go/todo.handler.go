@@ -26,7 +26,7 @@ func (input *todoInput) validateOnCreate() url.Values {
             "type":        []string{"isTodoType"},
             "title":       []string{"min:1", "max:255"},
             "description": []string{"min:1", "max:3000"},
-            "dueDate":     []string{"datetime", "afterToday"},
+            "dueDate": []string{"datetime", "datetimeAfterNow"},
             "assignees":   []string{"isListOfUsers"},
         },
         RequiredDefault: true,

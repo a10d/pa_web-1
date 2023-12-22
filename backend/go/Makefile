@@ -1,5 +1,6 @@
+
 dev:
-	@air
+	@ APP_INTERFACE=localhost:8080 air
 
 build:
 	@go build -o bin/backend
