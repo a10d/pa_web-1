@@ -53,6 +53,9 @@ func (s *APIServer) registerRoutes() {
     s.router.HandleFunc("/users/{id}", makeServeHandleFunc(s.handleGetUserById)).Methods(http.MethodGet)
     s.router.HandleFunc("/users/{id}", makeServeHandleFunc(s.handleUpdateUser)).Methods(http.MethodPut)
     s.router.HandleFunc("/users/{id}", makeServeHandleFunc(s.handleDeleteUser)).Methods(http.MethodDelete)
+
+    s.router.HandleFunc("/import", makeServeHandleFunc(s.handleImportData)).Methods(http.MethodPost)
+    s.router.HandleFunc("/export", makeServeHandleFunc(s.handleExportData)).Methods(http.MethodGet)
 }
 
 func (s *APIServer) registerCustomValidationRules() {
