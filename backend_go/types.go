@@ -21,15 +21,15 @@ type Todo struct {
 	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
-func NewTodo(todoType *TodoType, title string, description string, dueDate time.Time, assignees []*User) *Todo {
+func NewTodo(todoType *TodoType, title string, description string, dueDate time.Time, completed bool, assignees []*User) *Todo {
 	return &Todo{
 		ID:          newID(),
 		Type:        todoType,
 		Title:       title,
 		Description: description,
 		DueDate:     dueDate,
+        Completed: completed,
 		Assignees:   assignees,
-		Completed:   false,
 	}
 }
 

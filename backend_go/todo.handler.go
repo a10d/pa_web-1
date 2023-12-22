@@ -26,7 +26,7 @@ func (input *todoInput) validateOnCreate() url.Values {
             "type":        []string{"isTodoType"},
             "title":       []string{"min:1", "max:255"},
             "description": []string{"min:1", "max:3000"},
-            "dueDate": []string{"datetime", "datetimeAfterNow"},
+            "dueDate":     []string{"datetime", "datetimeAfterNow"},
             "assignees":   []string{"isListOfUsers"},
         },
         RequiredDefault: true,
@@ -88,6 +88,7 @@ func (s *APIServer) handleCreateTodo(w http.ResponseWriter, r *http.Request) err
         input.Title,
         input.Description,
         dueDate,
+        false,
         assignees,
     ))
 
