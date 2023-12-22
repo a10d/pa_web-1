@@ -633,3 +633,16 @@ func (s *SqliteStorage) DeleteUser(user *User) error {
 
 	return err
 }
+
+func (s *SqliteStorage) Clear() error {
+
+    _, err := s.db.Exec(`
+        delete from todos;
+        delete from todoTypes;
+        delete from users;
+        delete from todoAssignees;
+    `)
+
+    return err
+
+}

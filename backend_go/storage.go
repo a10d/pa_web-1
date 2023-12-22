@@ -19,4 +19,6 @@ type Storage interface {
 	CreateUser(*User) (*User, error)
 	UpdateUser(*User) (*User, error)
 	DeleteUser(*User) error
+
+    Clear() error
 }
