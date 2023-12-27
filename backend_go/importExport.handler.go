@@ -33,7 +33,7 @@ type todoTransfer struct {
 	AssigneeIDs []string `json:"assignees"`
 }
 
-type exportData struct {
+type transferDataset struct {
 	Version   int                 `json:"version"`
 	TodoTypes []*todoTypeTransfer `json:"todoTypes"`
 	Todos     []*todoTransfer     `json:"todos"`
@@ -42,7 +42,7 @@ type exportData struct {
 
 const importVersion = 2
 
-func makeExportData(tti []*TodoType, ti []*Todo, ui []*User) *exportData {
+func makeExportData(tti []*TodoType, ti []*Todo, ui []*User) *transferDataset {
 
 	tt := make([]*todoTypeTransfer, len(tti))
 	t := make([]*todoTransfer, len(ti))
@@ -86,7 +86,7 @@ func makeExportData(tti []*TodoType, ti []*Todo, ui []*User) *exportData {
 		}
 	}
 
-	return &exportData{
+    return &transferDataset{
 		Version:   importVersion,
 		TodoTypes: tt,
 		Todos:     t,
@@ -96,7 +96,7 @@ func makeExportData(tti []*TodoType, ti []*Todo, ui []*User) *exportData {
 
 func (s *APIServer) handleImportData(w http.ResponseWriter, r *http.Request) error {
 
-	input := new(exportData)
+    input := new(transferDataset)
 
 	if err := json.NewDecoder(r.Body).Decode(input); err != nil {
 		return err
