@@ -1,5 +1,5 @@
-import {LocalStoreConnector} from "./Connectors/LocalStoreConnector.ts";
 import {Connector} from "./Connectors/Connector.ts";
+import {ServerConnector} from "./Connectors/ServerConnector.ts";
 
 export type User = {
     id: string;
@@ -18,16 +18,40 @@ export type TodoType = {
 
 export type Todo = {
     id: string;
-    type: string;
+    type: TodoType;
     title: string;
     description: string | null;
     dueDate: Date;
-    assignees: string[];
+    assignees: User[];
     completed: boolean;
 };
 
-export type FormError = {}
+export class ValidationError extends Error {
 
-const client = new LocalStoreConnector();
+    name = "ValidationError";
+
+    messages: {
+        [key: string]: string[];
+    };
+
+    constructor(messages: { [key: string]: string[] } | undefined) {
+        super("Validation error occurred.");
+        this.messages = messages ?? {};
+    }
+
+    has(key: string): boolean {
+        return this.messages.hasOwnProperty(key);
+    }
+
+    get(key: string): string[] {
+        return this.messages[key] ?? [];
+    }
+
+    all(): { [key: string]: string[] } {
+        return this.messages;
+    }
+}
+
+const client = new ServerConnector();
 
 export const useBackend = (): Connector => client;
