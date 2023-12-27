@@ -19,11 +19,24 @@ func (input *userInput) validate() url.Values {
     return govalidator.New(govalidator.Options{
         Data: input,
         Rules: govalidator.MapData{
-            "firstName": []string{"min:1", "max:255"},
-            "lastName":  []string{"min:1", "max:255"},
+            "firstName": []string{"min:2", "max:255"},
+            "lastName":  []string{"min:2", "max:255"},
             "email":     []string{"email"},
         },
         RequiredDefault: true,
+        Messages: govalidator.MapData{
+            "firstName": []string{
+                "min:Der Vorname muss mindestens ein Zeichen lang sein.",
+                "max:Der Vorname darf nicht länger als 255 Zeichen sein.",
+            },
+            "lastName": []string{
+                "min:Der Nachname muss mindestens ein Zeichen lang sein.",
+                "max:Der Nachname darf nicht länger als 255 Zeichen sein.",
+            },
+            "email": []string{
+                "email:Die E-Mail-Adresse ist ungültig.",
+            },
+        },
     }).ValidateStruct()
 }
 

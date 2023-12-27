@@ -18,18 +18,45 @@ type todoInput struct {
     AssigneeIDs []string `json:"assignees"`
 }
 
+func (input *todoInput) validationMessages() govalidator.MapData {
+    return govalidator.MapData{
+        "type": []string{
+            "isTodoType:Der ausgewählte Aufgabentyp ist ungültig.",
+        },
+        "title": []string{
+            "min:Der Titel der Aufgabe muss mindestens drei Zeichen lang sein.",
+            "max:Der Titel der Aufgabe darf nicht länger als 255 Zeichen sein.",
+        },
+        "description": []string{
+            "min:Die Beschreibung muss mindestens drei Zeichen lang sein.",
+            "max:Die Beschreibung darf nicht länger als 3000 Zeichen sein. (Ja, das reicht wirklich.)",
+        },
+        "dueDate": []string{
+            "datetime:Das Fälligkeitsdatum muss ein gültiges Datum sein.",
+            "datetimeAfterNow:Das Fälligkeitsdatum muss in der Zukunft liegen.",
+        },
+        "assignees": []string{
+            "isListOfUsers:Es muss mindestens eine Person ausgewählt werden.",
+        },
+        "completed": []string{
+            "bool:Der Wert für 'Erledigt' muss ein boolscher Wert sein.",
+        },
+    }
+}
+
 func (input *todoInput) validateOnCreate() url.Values {
 
     return govalidator.New(govalidator.Options{
         Data: input,
         Rules: govalidator.MapData{
             "type":        []string{"isTodoType"},
-            "title":       []string{"min:1", "max:255"},
-            "description": []string{"min:1", "max:3000"},
+            "title":       []string{"min:3", "max:255"},
+            "description": []string{"min:3", "max:3000"},
             "dueDate":     []string{"datetime", "datetimeAfterNow"},
             "assignees":   []string{"isListOfUsers"},
         },
         RequiredDefault: true,
+        Messages: input.validationMessages(),
     }).ValidateStruct()
 }
 
@@ -39,13 +66,14 @@ func (input *todoInput) validateOnUpdate() url.Values {
         Data: input,
         Rules: govalidator.MapData{
             "type":        []string{"isTodoType"},
-            "title":       []string{"min:1", "max:255"},
-            "description": []string{"min:1", "max:3000"},
+            "title":       []string{"min:3", "max:255"},
+            "description": []string{"min:3", "max:3000"},
             "dueDate":     []string{"datetime"},
             "assignees":   []string{"isListOfUsers"},
             "completed":   []string{"bool"},
         },
         RequiredDefault: true,
+        Messages: input.validationMessages(),
     }).ValidateStruct()
 }
 

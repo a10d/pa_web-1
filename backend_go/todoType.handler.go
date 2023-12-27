@@ -20,10 +20,26 @@ func (input *todoTypeInput) validate() url.Values {
     return govalidator.New(govalidator.Options{
         Data: input,
         Rules: govalidator.MapData{
-            "name":         []string{"min:1", "max:255"},
-            "description":  []string{"min:1", "max:3000"},
+            "name":         []string{"min:3", "max:255"},
+            "description":  []string{"min:3", "max:3000"},
             "color":        []string{"css_color"},
             "reminderTime": []string{"numeric_between:1,60"},
+        },
+        Messages: govalidator.MapData{
+            "name": []string{
+                "min:Der Name des Aufgabentyps muss mindestens drei Zeichen lang sein.",
+                "max:Der Name des Aufgabentyps darf nicht länger als 255 Zeichen sein.",
+            },
+            "description": []string{
+                "min:Die Beschreibung muss mindestens drei Zeichen lang sein.",
+                "max:Die Beschreibung darf nicht länger als 3000 Zeichen sein. (Ja, das reicht wirklich.)",
+            },
+            "color": []string{
+                "css_color:Die Farbe muss ein gültiger CSS-Farbcode sein.",
+            },
+            "reminderTime": []string{
+                "numeric_between:Die Erinnerungszeit muss zwischen 1 und 60 Tagen liegen.",
+            },
         },
         RequiredDefault: true,
     }).ValidateStruct()
