@@ -17,8 +17,8 @@ const quotes: Quote[] = [
         author: 'Konfuzius',
     },
     {
-        quote: 'Wer nicht wagt, der nicht gewinnt.',
-        author: 'Friedrich Schiller',
+        quote: 'Wer nichts waget, der darf nichts hoffen.',
+        author: 'Friedrich von Schiller',
     },
     {
         quote: 'Räum dein Zimmer auf.',
