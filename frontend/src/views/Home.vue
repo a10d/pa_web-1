@@ -25,7 +25,7 @@ const todos = computed(() => store.todos
             case 'uncompleted':
                 return !todo.completed;
             case 'type':
-                return todo.type === filter.value.todoType;
+                return todo.type.id === filter.value.todoType;
         }
     })
     .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()));
@@ -36,7 +36,7 @@ const filter = ref<TodoFilter>({
 
 // Reset filter when creating a new task with a different type
 eventBus.on('createTodo', (todo) => {
-    if (filter.value.todoType !== todo.type) {
+    if (filter.value.todoType !== todo.type.id) {
         filter.value = {filter: 'uncompleted'}
     }
 });
