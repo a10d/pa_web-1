@@ -8,6 +8,7 @@ create table if not exists users
     updatedAt datetime
 );
 
+-- Set updatedAt on update
 create trigger if not exists users_updateTrigger
     after update
     on users
@@ -17,6 +18,7 @@ begin
     where id = new.id;
 end;
 
+-- Set createdAt and updatedAt on insert
 create trigger if not exists users_createTrigger
     after insert
     on users
@@ -27,6 +29,7 @@ begin
     where id = new.id;
 end;
 
+-- Delete all assignments of the deleted user
 create trigger if not exists users_deleteTrigger
     after delete
     on users
@@ -47,6 +50,7 @@ create table if not exists todoTypes
     updatedAt    datetime
 );
 
+-- Set updatedAt on update
 create trigger if not exists todoTypes_updateTrigger
     after update
     on todoTypes
@@ -56,6 +60,7 @@ begin
     where id = new.id;
 end;
 
+-- Set createdAt and updatedAt on insert
 create trigger if not exists todoTypes_createTrigger
     after insert
     on todoTypes
@@ -64,6 +69,17 @@ begin
     set createdAt = datetime('now'),
         updatedAt = datetime('now')
     where id = new.id;
+end;
+
+
+-- Delete all todos of the deleted todoType
+create trigger if not exists todoTypes_deleteTrigger
+    after delete
+    on todoTypes
+begin
+    delete
+    from todos
+    where todos.todoTypeId = old.id;
 end;
 
 create table if not exists todos
@@ -79,6 +95,7 @@ create table if not exists todos
     foreign key (todoTypeId) references todoTypes (id)
 );
 
+-- Set updatedAt on update
 create trigger if not exists todos_updateTrigger
     after update
     on todos
@@ -88,6 +105,7 @@ begin
     where id = new.id;
 end;
 
+-- Set createdAt and updatedAt on insert
 create trigger if not exists todos_createTrigger
     after insert
     on todos
@@ -98,6 +116,7 @@ begin
     where id = new.id;
 end;
 
+-- Delete all assignments of the deleted record
 create trigger if not exists todos_deleteTrigger
     after delete
     on todos
