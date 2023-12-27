@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 
-import {Todo} from "../../services/backend";
+import {Todo, TodoType, User, ValidationError} from "../../services/backend";
 import Modal from "../ui/Modal.vue";
 import {computed, reactive, ref, watch} from "vue";
 import PopButton from "../ui/PopButton.vue";
@@ -10,6 +10,8 @@ import FormField from "../ui/FormField.vue";
 import {useErrorHandler} from "../../services/errorHandler";
 import {useTodoStore} from "../../services/store/todo.ts";
 import {useEventBus} from "../../services/eventBus";
+import TodoTypeField from "./TodoTypeField.vue";
+import TodoDueDateField from "./TodoDueDateField.vue";
 
 type TodoEditModalProps = {
     todo: Todo | null;
@@ -30,18 +32,18 @@ const isSubmitting = ref(false);
 const formError = ref<Error | null>(null);
 
 const todoForm = reactive<{
-    type: string;
     title: string;
     description: string | null;
     dueDate: Date;
-    assignees: string[];
     completed: boolean;
+    type: TodoType | null,
+    assignees: User[],
 }>({
     title: "",
     description: "",
     dueDate: new Date(),
     completed: false,
-    type: "",
+    type: null,
     assignees: [],
 });
 
@@ -56,10 +58,6 @@ watch(() => props.todo, () => {
     todoForm.assignees = props.todo.assignees;
 })
 
-const selectableTodoTypes = computed(() => store.todoTypes.map((type) => ({
-    value: type.id,
-    label: type.name,
-})));
 
 function cancel() {
     if (isSubmitting.value) return;
@@ -68,6 +66,7 @@ function cancel() {
 
 function close() {
     emit('close');
+    formError.value = null;
 }
 
 async function submitEditForm() {
@@ -75,8 +74,9 @@ async function submitEditForm() {
     isSubmitting.value = true;
     try {
         await store.updateTodo({
-            ...props.todo,
+            id: props.todo.id,
             ...todoForm,
+            type: todoForm.type as TodoType,
         });
         eventBus.emit('playSound', 'updateTodo');
         close();
@@ -96,9 +96,12 @@ async function destroy() {
         eventBus.emit('playSound', 'deleteTodo');
         close();
     } catch (e: any) {
-        formError.value = e;
-        useErrorHandler().handle(e);
         eventBus.emit('playSound', 'formError');
+        if (e instanceof ValidationError) {
+            formError.value = e;
+        } else {
+            useErrorHandler().handle(e);
+        }
     } finally {
         isSubmitting.value = false;
     }
@@ -132,28 +135,13 @@ async function destroy() {
                     type="textarea"
                 />
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <!-- DueDate -->
-                    <div class="col-span-2 sm:col-span-1">
-                        <FormField v-model="todoForm.dueDate"
-                                   label="Fällig am"
-                                   name="dueDate"
-                                   required
-                                   type="date"/>
-                    </div>
+                    <TodoDueDateField v-model="todoForm.dueDate"/>
 
                     <!-- TodoType -->
-                    <div class="col-span-2 sm:col-span-1">
-                        <FormField v-model="todoForm.type"
-                                   :select-options="selectableTodoTypes"
-                                   label="Aufgabentyp"
-                                   name="todoType"
-                                   required
-                                   type="select"/>
-                    </div>
-
+                    <TodoTypeField v-model="todoForm.type"/>
                 </div>
-
 
                 <!-- Assignees -->
                 <label class="block text-sm font-medium text-slate-800 px-2 mb-2">Zugewiesen an</label>

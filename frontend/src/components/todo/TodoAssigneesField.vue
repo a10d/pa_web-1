@@ -3,20 +3,23 @@
 import UserAvatar from "../ui/UserAvatar.vue";
 import {useTodoStore} from "../../services/store/todo.ts";
 import {computed} from "vue";
+import {User} from "../../services/backend";
 
 type TodoAssigneesFieldProps = {
-    modelValue: string[];
+    modelValue: User[];
 }
 
 const props = defineProps<TodoAssigneesFieldProps>();
 
 const emit = defineEmits<{
-    'update:modelValue': [value: string[]],
+    'update:modelValue': [value: User[]],
 }>();
 
 const valueProxy = computed({
-    get: () => props.modelValue,
-    set: (value: string[]) => emit('update:modelValue', value),
+    get: () => props.modelValue.map(user => user.id),
+    set: (value: string[]) => {
+        emit('update:modelValue', useTodoStore().users.filter(user => value.includes(user.id)));
+    },
 });
 
 const users = computed(() => useTodoStore().users);
@@ -34,7 +37,7 @@ const users = computed(() => useTodoStore().users);
         </div>
 
         <label v-for="user in users" :key="user.id"
-               :class="{'bg-blue-500 text-white': modelValue.includes(user.id)}"
+               :class="{'bg-blue-500 text-white': valueProxy.includes(user.id)}"
                class="relative flex group focus-within:ring items-center rounded-full p-2 select-none">
 
             <input v-model="valueProxy" :value="user.id"

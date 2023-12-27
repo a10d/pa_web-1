@@ -35,13 +35,8 @@ const checkBoxProxy = computed({
     }
 });
 
-const todoType = computed<TodoType>(() => store.todoTypeById(props.todo.type));
-
-const assignees = computed<User[]>((): User[] => {
-    return props.todo.assignees
-        .map(id => store.users.find(user => user.id === id))
-        .filter(user => typeof user === 'object') as User[]
-});
+const todoType = computed<TodoType>(() => props.todo.type);
+const assignees = computed<User[]>((): User[] => props.todo.assignees);
 
 const dueDateReadable = computed<string>(() => moment(props.todo.dueDate).format('dddd, DD. MMMM YYYY'));
 const dueDateRelative = computed<string>(() => moment(props.todo.dueDate).fromNow());

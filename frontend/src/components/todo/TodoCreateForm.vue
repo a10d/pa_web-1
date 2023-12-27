@@ -8,12 +8,15 @@ import {useEventBus} from "../../services/eventBus";
 import {useErrorHandler} from "../../services/errorHandler";
 import FormErrors from "../ui/FormErrors.vue";
 import TodoAssigneesField from "./TodoAssigneesField.vue";
+import {TodoType, User, ValidationError} from "../../services/backend";
+import TodoTypeField from "./TodoTypeField.vue";
+import TodoDueDateField from "./TodoDueDateField.vue";
 
 const eventBus = useEventBus();
 const store = useTodoStore();
 
 const selectableTodoTypes = computed(() => store.todoTypes.map((type) => ({
-    value: type.id,
+    value: type,
     label: type.name,
 })));
 
@@ -23,13 +26,13 @@ const todoForm = reactive<{
     title: string,
     description: string,
     dueDate: Date,
-    type: string,
-    assignees: string[],
+    type: TodoType | null,
+    assignees: User[],
 }>({
     title: "",
     description: "",
     dueDate: new Date(),
-    type: "",
+    type: null,
     assignees: [],
 });
 
@@ -49,10 +52,15 @@ const todoCTA = computed(() => todoCTAs[Math.floor(Math.random() * todoCTAs.leng
 
 async function openActionBar() {
 
+    formError.value = null;
+
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
     todoForm.title = "";
     todoForm.description = "";
-    todoForm.dueDate = new Date();
-    todoForm.type = store.todoTypes[0]?.id;
+    todoForm.dueDate = tomorrow;
+    todoForm.type = store.todoTypes[0];
     todoForm.assignees = [];
 
     formVisible.value = true;
@@ -83,9 +91,12 @@ async function submitForm() {
         eventBus.emit('playSound', 'submitTodoForm')
         cancel();
     } catch (e) {
-        formError.value = e;
-        useErrorHandler().handle(e);
-        eventBus.emit('playSound', 'formError')
+        eventBus.emit('playSound', 'formError');
+        if (e instanceof ValidationError) {
+            formError.value = e;
+        } else {
+            useErrorHandler().handle(e);
+        }
     } finally {
         isSubmitting.value = false;
     }
@@ -138,22 +149,11 @@ async function submitForm() {
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <!-- DueDate -->
-                        <FormField v-model="todoForm.dueDate"
-                                   label="Fällig am"
-                                   name="dueDate"
-                                   required
-                                   type="date"/>
+                        <TodoDueDateField v-model="todoForm.dueDate"/>
 
                         <!-- TodoType -->
-                        <FormField v-model="todoForm.type"
-                                   :select-options="selectableTodoTypes"
-                                   label="Aufgabentyp"
-                                   name="todoType"
-                                   required
-                                   type="select"/>
-
+                        <TodoTypeField v-model="todoForm.type"/>
                     </div>
-
 
                     <!-- Assignees -->
                     <label class="block text-sm font-medium text-slate-800 px-2 mb-2">Zugewiesen an</label>

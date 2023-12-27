@@ -5,12 +5,14 @@ import {computed, nextTick, reactive, ref} from "vue";
 import PopButton from "../ui/PopButton.vue";
 import Modal from "../ui/Modal.vue";
 import FormField from "../ui/FormField.vue";
-import {User} from "../../services/backend";
+import {User, ValidationError} from "../../services/backend";
 import FormErrors from "../ui/FormErrors.vue";
 import {useErrorHandler} from "../../services/errorHandler";
 import UserAvatar from "../ui/UserAvatar.vue";
+import {useEventBus} from "../../services/eventBus";
 
 const store = useTodoStore();
+const eventBus = useEventBus();
 
 const users = computed(() => store.users);
 
@@ -47,7 +49,14 @@ async function submitCreateForm() {
         await store.createUser(createForm);
         cancelCreateModal();
     } catch (e: any) {
-        formError.value = e;
+
+        eventBus.emit('playSound', 'formError');
+        if (e instanceof ValidationError) {
+            formError.value = e;
+        } else {
+            useErrorHandler().handle(e);
+        }
+
     } finally {
         isSubmitting.value = false;
     }
@@ -96,7 +105,12 @@ async function submitEditForm() {
         } as User);
         cancelEditingUser();
     } catch (e: any) {
-        formError.value = e;
+        eventBus.emit('playSound', 'formError');
+        if (e instanceof ValidationError) {
+            formError.value = e;
+        } else {
+            useErrorHandler().handle(e);
+        }
     } finally {
         isSubmitting.value = false;
     }
@@ -107,7 +121,8 @@ async function submitEditForm() {
 <template>
     <div class="relative">
         <!-- Header -->
-        <div class="flex items-center justify-between gap-2 sticky top-0 py-4 bg-white/80 backdrop-blur-sm border-b border-white z-40">
+        <div
+            class="flex items-center justify-between gap-2 sticky top-0 py-4 bg-white/80 backdrop-blur-sm border-b border-white z-40">
             <h2 class="text-xl font-medium">Personen</h2>
             <PopButton color="gray" label="Erfassen" type="button" @click="openCreateModal"/>
         </div>

@@ -5,10 +5,13 @@ import {computed, nextTick, reactive, ref} from "vue";
 import PopButton from "../ui/PopButton.vue";
 import Modal from "../ui/Modal.vue";
 import FormField from "../ui/FormField.vue";
-import {TodoType} from "../../services/backend";
+import {TodoType, ValidationError} from "../../services/backend";
 import FormErrors from "../ui/FormErrors.vue";
+import {useErrorHandler} from "../../services/errorHandler";
+import {useEventBus} from "../../services/eventBus";
 
 const store = useTodoStore();
+const eventBus = useEventBus();
 
 const todoTypes = computed(() => store.todoTypes);
 
@@ -49,7 +52,12 @@ async function submitCreateForm() {
         await store.createTodoType(createForm);
         cancelCreateModal();
     } catch (e) {
-        formError.value = e;
+        eventBus.emit('playSound', 'formError');
+        if (e instanceof ValidationError) {
+            formError.value = e;
+        } else {
+            useErrorHandler().handle(e);
+        }
     } finally {
         isSubmitting.value = false;
     }
@@ -103,7 +111,12 @@ async function submitEditForm() {
         } as TodoType);
         cancelEditingTodoType();
     } catch (e) {
-        formError.value = e;
+        eventBus.emit('playSound', 'formError');
+        if (e instanceof ValidationError) {
+            formError.value = e;
+        } else {
+            useErrorHandler().handle(e);
+        }
     } finally {
         isSubmitting.value = false;
     }
@@ -115,7 +128,8 @@ async function submitEditForm() {
 
     <div class="relative">
         <!-- Header -->
-        <div class="flex items-center justify-between gap-2 sticky top-0 py-4 bg-white/80 backdrop-blur-sm border-b border-white z-40">
+        <div
+            class="flex items-center justify-between gap-2 sticky top-0 py-4 bg-white/80 backdrop-blur-sm border-b border-white z-40">
             <h2 class="text-xl font-medium">Aufgabentypen</h2>
             <PopButton color="gray" label="Erfassen" type="button" @click="openCreateModal"/>
         </div>
@@ -186,7 +200,7 @@ async function submitEditForm() {
                 <FormField v-model="editForm.description" label="Beschreibung" name="description" type="textarea"/>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField v-model="editForm.color" label="Farbe" name="color" type="color"/>
-                    <FormField v-model="editForm.reminderTime" :max="30" :min="1" label="Frist (Tage)"
+                    <FormField v-model="editForm.reminderTime" :max="60" :min="1" label="Frist (Tage)"
                                name="reminderTime"
                                type="number"/>
                 </div>

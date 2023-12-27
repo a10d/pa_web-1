@@ -11,8 +11,9 @@ const soundMap = {
     'todoCompleted': 'scratch',
     'todoUncompleted': 'erase',
     'deleteTodo': 'whop',
-    'buttonClick': 'thud',
+    'buttonClick': 'klack',
     'submitTodoForm': 'ding',
+    'formError': 'pock'
 }
 
 const {play} = useSound(popSound, {
@@ -42,17 +43,12 @@ function toggleSounds() {
 
 eventBus.on('playSound', (soundEvent: string) => {
     if (!soundsEnabled.value) return;
-
-    if (!soundMap.hasOwnProperty(soundEvent)) {
-        console.debug('No mapped sound for event', soundEvent)
-        return;
-    }
-
+    if (!soundMap.hasOwnProperty(soundEvent)) return;
 
     play({
-        // @ts-ignore - Key is guarded, so stfu, dear typescript compiler
+        // @ts-ignore - Key is guarded, so please, dear typescript compiler, stfu
         id: soundMap[soundEvent],
-        volume: 0.3,
+        volume: 0.9,
         interrupt: true,
         sprite: true,
     });
