@@ -8,7 +8,7 @@ import {useEventBus} from "../../services/eventBus";
 import {useErrorHandler} from "../../services/errorHandler";
 import FormErrors from "../ui/FormErrors.vue";
 import TodoAssigneesField from "./TodoAssigneesField.vue";
-import {TodoType, User, ValidationError} from "../../services/backend";
+import {Todo, TodoType, User, ValidationError} from "../../services/backend";
 import TodoTypeField from "./TodoTypeField.vue";
 import TodoDueDateField from "./TodoDueDateField.vue";
 
@@ -87,7 +87,7 @@ function cancel() {
 async function submitForm() {
     isSubmitting.value = true;
     try {
-        await store.createTodo(todoForm);
+        await store.createTodo(todoForm as Partial<Todo>);
         eventBus.emit('playSound', 'submitTodoForm')
         cancel();
     } catch (e) {
@@ -122,7 +122,7 @@ async function submitForm() {
                 leave-to-class="scale-y-0 opacity-0">
         <div v-if="formVisible"
              class="fixed top-4 left-1/2 -translate-x-1/2 w-full max-w-2xl p-2 z-50 ">
-            <div class="mx-auto rounded-lg bg-white p-4 shadow-2xl border max-h-[80vh] overflow-y-auto">
+            <div class="mx-auto rounded-lg bg-white p-4 shadow-2xl border max-h-[95vh] overflow-y-auto">
 
                 <fieldset :disabled="formDisabled">
                     <!-- Errors -->
@@ -136,6 +136,7 @@ async function submitForm() {
                         name="title"
                         required
                     />
+                    <FormErrors :error="formError" field="title"/>
 
                     <!-- Description -->
                     <FormField
@@ -146,18 +147,26 @@ async function submitForm() {
                         required
                         type="textarea"
                     />
+                    <FormErrors :error="formError" field="description"/>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- DueDate -->
-                        <TodoDueDateField v-model="todoForm.dueDate"/>
+                        <div>
+                            <!-- DueDate -->
+                            <TodoDueDateField v-model="todoForm.dueDate"/>
+                            <FormErrors :error="formError" field="dueDate"/>
+                        </div>
 
-                        <!-- TodoType -->
-                        <TodoTypeField v-model="todoForm.type"/>
+                        <div>
+                            <!-- TodoType -->
+                            <TodoTypeField v-model="todoForm.type"/>
+                            <FormErrors :error="formError" field="type"/>
+                        </div>
                     </div>
 
                     <!-- Assignees -->
                     <label class="block text-sm font-medium text-slate-800 px-2 mb-2">Zugewiesen an</label>
                     <TodoAssigneesField v-model="todoForm.assignees"/>
+                    <FormErrors :error="formError" field="assignees"/>
 
                 </fieldset>
 

@@ -40,7 +40,7 @@ function cancelCreateModal() {
 }
 
 const isSubmitting = ref(false);
-const formError = ref<any>(null);
+const formError = ref<ValidationError | null>(null);
 
 async function submitCreateForm() {
     isSubmitting.value = true;
@@ -137,17 +137,21 @@ async function submitEditForm() {
 
             <!-- List Items -->
             <div v-for="user in users" :key="user.id"
-                 class="rounded bg-white p-2 mb-2 shadow md:flex gap-2 group items-center">
-                <UserAvatar :user="user" class="h-8"/>
-                <div class="mr-auto">
-                    <p class="font-medium text-lg" v-text="`${user.firstName} ${user.lastName}`"/>
-                    <p class="text-base text-gray-600" v-text="user.email"/>
+                 class="rounded bg-white p-2 mb-2 shadow flex flex-wrap justify-end gap-2 group items-center">
+
+
+                <div class="mr-auto w-full sm:w-auto flex items-center">
+                    <UserAvatar :user="user" class="h-8"/>
+                    <div class="ml-3">
+                        <p class="font-medium text-lg" v-text="`${user.firstName} ${user.lastName}`"/>
+                        <p class="text-base text-gray-600" v-text="user.email"/>
+                    </div>
                 </div>
 
 
-                <PopButton class="group-hover:opacity-100 opacity-0" color="gray" label="Bearbeiten" type="button"
+                <PopButton class="group-hover:opacity-100 sm:opacity-0" color="gray" label="Bearbeiten" type="button"
                            @click="editUser(user)"/>
-                <PopButton class="group-hover:opacity-100 opacity-0" color="red" label="Löschen" type="button"
+                <PopButton class="group-hover:opacity-100 sm:opacity-0" color="red" label="Löschen" type="button"
                            @click="deleteUser(user)"/>
             </div>
         </div>
@@ -160,13 +164,20 @@ async function submitEditForm() {
                 <h2 class="text-xl font-medium mb-4">Person erfassen</h2>
                 <FormErrors :error="formError"/>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField v-model="createForm.firstName" label="Vorname" name="firstName" required/>
-                    <FormField v-model="createForm.lastName" label="Nachname" name="name" required/>
+                    <div>
+                        <FormField v-model="createForm.firstName" label="Vorname" name="firstName" required/>
+                        <FormErrors :error="formError" field="firstName"/>
+                    </div>
+                    <div>
+                        <FormField v-model="createForm.lastName" label="Nachname" name="name" required/>
+                        <FormErrors :error="formError" field="lastName"/>
+                    </div>
                 </div>
                 <FormField v-model="createForm.email" label="E-Mail" name="email" required type="email"/>
+                <FormErrors :error="formError" field="email"/>
             </fieldset>
 
-            <div class="p-4 border-t bg-gray-50 flex justify-end gap-4 flex-wrap">
+            <div class="p-4 border-t bg-gray-50 flex justify-between gap-4 flex-wrap">
                 <PopButton :disabled="isSubmitting" color="gray" label="Abbrechen" type="button"
                            @click="cancelCreateModal"/>
                 <PopButton :disabled="isSubmitting" color="green" label="Erstellen" type="submit"/>
@@ -181,14 +192,20 @@ async function submitEditForm() {
                 <h2 class="text-xl font-medium mb-4">Person bearbeiten</h2>
                 <FormErrors :error="formError"/>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField v-model="editForm.firstName" label="Vorname" name="firstName" required/>
-                    <FormField v-model="editForm.lastName" label="Nachname" name="name" required/>
+                    <div>
+                        <FormField v-model="editForm.firstName" label="Vorname" name="firstName" required/>
+                        <FormErrors :error="formError" field="firstName"/>
+                    </div>
+                    <div>
+                        <FormField v-model="editForm.lastName" label="Nachname" name="name" required/>
+                        <FormErrors :error="formError" field="lastName"/>
+                    </div>
                 </div>
-
                 <FormField v-model="editForm.email" label="E-Mail" name="email" required type="email"/>
+                <FormErrors :error="formError" field="email"/>
             </fieldset>
 
-            <div class="p-4 border-t bg-gray-50 flex justify-end gap-4 flex-wrap">
+            <div class="p-4 border-t bg-gray-50 flex justify-between gap-4 flex-wrap">
                 <PopButton :disabled="isSubmitting" color="gray" label="Abbrechen" type="button"
                            @click="cancelEditingUser"/>
                 <PopButton :disabled="isSubmitting" color="green" label="Sichern" type="submit"/>

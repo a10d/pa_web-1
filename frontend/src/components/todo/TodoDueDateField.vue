@@ -4,7 +4,7 @@ import FormField from "../ui/FormField.vue";
 import {computed} from "vue";
 
 type TodoDueDateFieldProps = {
-    modelValue: string;
+    modelValue: string | Date;
 }
 
 const props = defineProps<TodoDueDateFieldProps>();

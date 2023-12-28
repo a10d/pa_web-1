@@ -43,7 +43,7 @@ function cancelCreateModal() {
 }
 
 const isSubmitting = ref(false);
-const formError = ref<any>(null);
+const formError = ref<ValidationError | null>(null);
 
 async function submitCreateForm() {
     isSubmitting.value = true;
@@ -68,7 +68,7 @@ async function deleteTodoType(todoType: TodoType) {
         formError.value = null;
         await store.deleteTodoType(todoType);
     } catch (e) {
-        formError.value = e;
+        useErrorHandler().handle(e)
     }
 }
 
@@ -145,8 +145,8 @@ async function submitEditForm() {
 
             <!-- List Items -->
             <div v-for="todoType in todoTypes" :key="todoType.id"
-                 class="rounded bg-white p-2 mb-2 shadow md:flex gap-2 group items-center">
-                <div class="mr-auto">
+                 class="rounded bg-white p-2 mb-2 shadow flex flex-wrap justify-end gap-2 group items-center">
+                <div class="mr-auto w-full sm:w-auto">
                     <p class="font-medium text-lg">
                         <span :style="{color: todoType.color}" class="mr-1">■</span>
                         <span v-text="todoType.name"/>
@@ -155,9 +155,9 @@ async function submitEditForm() {
                 </div>
 
 
-                <PopButton class="group-hover:opacity-100 opacity-0" color="gray" label="Bearbeiten" type="button"
+                <PopButton class="group-hover:opacity-100 sm:opacity-0" color="gray" label="Bearbeiten" type="button"
                            @click="editTodoType(todoType)"/>
-                <PopButton class="group-hover:opacity-100 opacity-0" color="red" label="Löschen" type="button"
+                <PopButton class="group-hover:opacity-100 sm:opacity-0" color="red" label="Löschen" type="button"
                            @click="deleteTodoType(todoType)"/>
             </div>
         </div>
@@ -172,15 +172,24 @@ async function submitEditForm() {
                 <FormErrors :error="formError"/>
 
                 <FormField v-model="createForm.name" label="Name" name="name" required/>
+                <FormErrors :error="formError" field="name"/>
                 <FormField v-model="createForm.description" label="Beschreibung" name="description" type="textarea"/>
+                <FormErrors :error="formError" field="description"/>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField v-model="createForm.color" label="Farbe" name="color" type="color"/>
-                    <FormField v-model="createForm.reminderTime" :max="30" :min="1" label="Erinnerung (Tage)"
-                               name="reminderTime" type="number"/>
+                    <div>
+                        <FormField v-model="createForm.color" label="Farbe" name="color" type="color"/>
+                        <FormErrors :error="formError" field="color"/>
+                    </div>
+                    <div>
+                        <FormField v-model="createForm.reminderTime" :max="30" :min="1" label="Erinnerung (Tage)"
+                                   name="reminderTime" type="number"/>
+                        <FormErrors :error="formError" field="reminderTime"/>
+                    </div>
+
                 </div>
             </fieldset>
 
-            <div class="p-4 border-t bg-gray-50 flex justify-end gap-4 flex-wrap">
+            <div class="p-4 border-t bg-gray-50 flex justify-between gap-4 flex-wrap">
                 <PopButton :disabled="isSubmitting" color="gray" label="Abbrechen" type="button"
                            @click="cancelCreateModal"/>
                 <PopButton :disabled="isSubmitting" color="green" label="Erstellen" type="submit"/>
@@ -197,16 +206,23 @@ async function submitEditForm() {
                 <FormErrors :error="formError"/>
 
                 <FormField v-model="editForm.name" label="Name" name="name" required/>
+                <FormErrors :error="formError" field="name"/>
                 <FormField v-model="editForm.description" label="Beschreibung" name="description" type="textarea"/>
+                <FormErrors :error="formError" field="description"/>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField v-model="editForm.color" label="Farbe" name="color" type="color"/>
-                    <FormField v-model="editForm.reminderTime" :max="60" :min="1" label="Frist (Tage)"
-                               name="reminderTime"
-                               type="number"/>
+                    <div>
+                        <FormField v-model="editForm.color" label="Farbe" name="color" type="color"/>
+                        <FormErrors :error="formError" field="color"/>
+                    </div>
+                    <div>
+                        <FormField v-model="editForm.reminderTime" :max="60" :min="1" label="Frist (Tage)"
+                                   name="reminderTime" type="number"/>
+                        <FormErrors :error="formError" field="reminderTime"/>
+                    </div>
                 </div>
             </fieldset>
 
-            <div class="p-4 border-t bg-gray-50 flex justify-end gap-4 flex-wrap">
+            <div class="p-4 border-t bg-gray-50 flex justify-between gap-4 flex-wrap">
                 <PopButton :disabled="isSubmitting" color="gray" label="Abbrechen" type="button"
                            @click="cancelEditingTodoType"/>
                 <PopButton :disabled="isSubmitting" color="green" label="Sichern" type="submit"/>

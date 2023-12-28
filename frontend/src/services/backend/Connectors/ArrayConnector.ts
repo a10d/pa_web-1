@@ -1,6 +1,5 @@
 import {v4 as uuid} from "uuid";
-import {Todo, TodoType, User} from "../index.ts";
-import {Connector} from "./Connector.ts";
+import {Connector, Todo, TodoType, User} from "../index.ts";
 
 export class ArrayConnector implements Connector {
 

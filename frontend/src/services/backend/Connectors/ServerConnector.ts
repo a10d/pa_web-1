@@ -1,5 +1,4 @@
-import {Connector} from "./Connector.ts";
-import {Todo, TodoType, User, ValidationError} from "../index.ts";
+import {Connector, Todo, TodoType, User, ValidationError} from "../index.ts";
 
 
 type ValidationErrorResponse = {
@@ -32,7 +31,7 @@ export class ServerConnector implements Connector {
 
     private async delete(uri: string, options: any = {}): Promise<Response> {
         return this.fetch(uri, {
-            method: "delete",
+            method: "DELETE",
             ...options,
         });
     }

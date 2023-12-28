@@ -24,7 +24,9 @@ const store = useTodoStore();
 const todos = computed(() => store.todos);
 const todoTypes = computed(() => store.todoTypes);
 
-const todoTypesWithTodos = computed(() => todoTypes.value.filter(todoType => todos.value.some(({type}) => type === todoType.id)))
+const todoTypesWithTodos = computed(() => todoTypes.value
+    .filter(todoType => todos.value.some(({type}) => type.id === todoType.id))
+);
 
 function setFilter(filter: TodoFilter["filter"]) {
     emit('update:modelValue', {

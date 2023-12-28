@@ -29,7 +29,7 @@ const eventBus = useEventBus();
 
 const isModalVisible = computed(() => props.todo !== null);
 const isSubmitting = ref(false);
-const formError = ref<Error | null>(null);
+const formError = ref<ValidationError | null>(null);
 
 const todoForm = reactive<{
     title: string;
@@ -123,8 +123,10 @@ async function destroy() {
                     name="title"
                     required
                 />
+                <FormErrors :error="formError" field="title"/>
 
                 <FormField v-model="todoForm.completed" label="Erledigt" name="completed" type="checkbox"/>
+                <FormErrors :error="formError" field="completed"/>
 
                 <!-- Description -->
                 <FormField
@@ -134,18 +136,25 @@ async function destroy() {
                     required
                     type="textarea"
                 />
+                <FormErrors :error="formError" field="description"/>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- DueDate -->
-                    <TodoDueDateField v-model="todoForm.dueDate"/>
-
-                    <!-- TodoType -->
-                    <TodoTypeField v-model="todoForm.type"/>
+                    <div>
+                        <!-- DueDate -->
+                        <TodoDueDateField v-model="todoForm.dueDate"/>
+                        <FormErrors :error="formError" field="dueDate"/>
+                    </div>
+                    <div>
+                        <!-- TodoType -->
+                        <TodoTypeField v-model="todoForm.type"/>
+                        <FormErrors :error="formError" field="type"/>
+                    </div>
                 </div>
 
                 <!-- Assignees -->
                 <label class="block text-sm font-medium text-slate-800 px-2 mb-2">Zugewiesen an</label>
                 <TodoAssigneesField v-model="todoForm.assignees"/>
+                <FormErrors :error="formError" field="assignees"/>
 
             </fieldset>
             <div class="p-4 border-t bg-gray-50 flex justify-end gap-4 flex-wrap">

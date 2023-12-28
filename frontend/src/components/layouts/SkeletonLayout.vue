@@ -1,8 +1,8 @@
 <template>
-    <div class="fixed inset-0">
+    <div class="fixed inset-0 p-2">
         <div class="mx-auto max-w-2xl">
             <!-- Input Box -->
-            <div class="animate-pulse bg-gray-200 rounded h-16 my-8"/>
+            <div class="animate-pulse bg-gray-200 rounded h-16 my-8 mx-16"/>
 
             <!-- Content -->
             <div v-for="_ in 10" class="my-8">
