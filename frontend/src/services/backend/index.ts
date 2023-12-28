@@ -1,4 +1,6 @@
 import {ServerConnector} from "./Connectors/ServerConnector.ts";
+import {ArrayConnector} from "./Connectors/ArrayConnector.ts";
+import {LocalStorageConnector} from "./Connectors/LocalStorageConnector.ts";
 
 export type User = {
     id: string;
@@ -51,26 +53,47 @@ export class ValidationError extends Error {
     }
 }
 
-const client = new ServerConnector();
-
 export interface Connector {
     createUser(user: Partial<User>): Promise<User>;
+
     updateUser(user: User): Promise<User>;
+
     deleteUser(user: User): Promise<boolean>;
+
     fetchUsers(): Promise<User[]>;
 
     fetchTodos(): Promise<Todo[]>;
+
     createTodo(todo: Partial<Todo>): Promise<Todo>;
+
     updateTodo(todo: Todo): Promise<Todo>;
+
     deleteTodo(todo: Todo): Promise<boolean>;
 
     fetchTodoTypes(): Promise<TodoType[]>;
+
     createTodoType(todoType: Partial<TodoType>): Promise<TodoType>;
+
     updateTodoType(todoType: TodoType): Promise<TodoType>;
+
     deleteTodoType(todoType: TodoType): Promise<boolean>;
 
     createExport(): Promise<string>;
+
     importData(data: string): Promise<boolean>;
 }
+
+
+const client = function (): Connector {
+    switch (import.meta.env.VITE_BACKEND_CONNECTOR ?? "array") {
+        case "localstorage":
+            return new LocalStorageConnector();
+        case "server":
+            return new ServerConnector(import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8080");
+        case "array":
+        default:
+            return new ArrayConnector();
+    }
+}();
 
 export const useBackend = (): Connector => client;

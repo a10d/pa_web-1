@@ -10,7 +10,11 @@ type ValidationErrorResponse = {
 
 export class ServerConnector implements Connector {
 
-    private endpoint: string = "http://localhost:8080/";
+    private readonly endpoint: string;
+    
+    constructor(endpoint: string) {
+        this.endpoint = endpoint;
+    }
 
     private async get<T>(uri: string): Promise<T> {
         const response = await this.fetch(uri);

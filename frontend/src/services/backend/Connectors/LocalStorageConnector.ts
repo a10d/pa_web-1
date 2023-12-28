@@ -1,7 +1,7 @@
 import {ArrayConnector} from "./ArrayConnector.ts";
 
 
-export class LocalStoreConnector extends ArrayConnector {
+export class LocalStorageConnector extends ArrayConnector {
     protected writeChanges() {
         localStorage.setItem("users", JSON.stringify(this.users));
         localStorage.setItem("todos", JSON.stringify(this.todos));
