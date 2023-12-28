@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  frontend:
+    image: a10d/pa_web1_frontend
+    build:
+      context: frontend
+    ports:
+      - "8080:8080"
+  backend:
+    image: a10d/pa_web1_backend
+    build:
+      context: backend
+    ports:
+      - "8080:8080"

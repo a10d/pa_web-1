@@ -1,9 +1,0 @@
-version: '3.4'
-
-services:
-  todoapi:
-    image: a10d/pa_web-1_backend:latest
-    build:
-      context: .
-    ports:
-      - "8080:8080"
