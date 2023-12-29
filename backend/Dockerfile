@@ -9,11 +9,12 @@ RUN go mod download
 
 COPY . .
 
+ARG GOOS=linux
+ARG GOARCH=amd64
+ARG CGO_ENABLED=0
+
 # Build the binary
-RUN GOOS=linux \
-    GOARCH=amd64 \
-    CGO_ENABLED=0 \
-    go build -o bin/server
+RUN go build -o bin/server
 
 FROM scratch
 WORKDIR /app

@@ -5,11 +5,11 @@ services:
     image: a10d/pa_web1_frontend
     build:
       context: frontend
+      args:
+        BACKEND_CONNECTOR: server
+        BACKEND_URL: http://localhost:8080/
     ports:
-      - "8081:80"
-    environment:
-      - VITE_BACKEND_CONNECTOR=server
-      - VITE_BACKEND_URL=http://localhost:8090
+      - "5173:80"
   backend:
     image: a10d/pa_web1_backend
     build:

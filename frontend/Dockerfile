@@ -8,8 +8,13 @@ RUN npm ci
 
 COPY . .
 
+ARG BACKEND_CONNECTOR
+ARG BACKEND_URL
+
 # Bundle app
-RUN npm run build
+RUN VITE_BACKEND_CONNECTOR=$BACKEND_CONNECTOR \
+    VITE_BACKEND_URL=$BACKEND_URL \
+    npm run build
 
 FROM nginx:1.25-alpine
 
