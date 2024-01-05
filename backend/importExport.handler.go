@@ -2,8 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 	"time"
 )
@@ -109,8 +107,6 @@ func (s *APIServer) handleImportData(w http.ResponseWriter, r *http.Request) err
 		})
 	}
 
-	log.Println("Importing data, clearing database.")
-
 	if err := s.store.Clear(); err != nil {
 		return err
 	}
@@ -144,8 +140,6 @@ func (s *APIServer) handleImportData(w http.ResponseWriter, r *http.Request) err
 		if err != nil {
 			return err
 		}
-
-		fmt.Println("Due date is", dueDate)
 
 		assignees := make([]*User, len(m.AssigneeIDs))
 

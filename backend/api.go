@@ -184,12 +184,14 @@ func makeServeHandleFunc(f apiFunc) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
 
         t := time.Now().Format(time.TimeOnly)
-        fmt.Printf("%s | \033[0;31m%s\033[0m  \t| %s\n", t, r.Method, r.RequestURI)
+
+        fmt.Printf("%s | \033[0;31m%-8s\033[0m | %s\n", t, r.Method, r.RequestURI)
 
         if err := f(w, r); err != nil {
 
-            fmt.Printf("%s | \033[0;31m\t\t  err: %s\u001B[0m\n", t, err.Error())
-			err := writeJSON(w, http.StatusInternalServerError, apiError{Error: err.Error()})
+            fmt.Printf("%s |          | \u001B[0;31merr: %s\u001B[0m\n", t, err.Error())
+
+            err := writeJSON(w, http.StatusInternalServerError, apiError{Error: err.Error()})
 
             if err != nil {
 				return
