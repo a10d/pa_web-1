@@ -1,0 +1,204 @@
+{
+  "version": 2,
+  "todoTypes": [
+    {
+      "id": "d5b22115-b22d-4a22-aa6c-b0bd7071f32c",
+      "name": "Arbeit",
+      "description": "Dinge, welche ich für den Job noch zu erledigen habe.",
+      "color": "#0091ff",
+      "reminderTime": 5
+    },
+    {
+      "id": "55c6c54a-a761-46ad-bf52-e8749c78744d",
+      "name": "Freizeit",
+      "description": "Sachen, die ich in der Freizeit erledigen muss.",
+      "color": "#41a300",
+      "reminderTime": 1
+    },
+    {
+      "id": "dfb6a3c6-80db-4c10-8227-4d63cc1755f6",
+      "name": "Haushalt",
+      "description": "Aufgaben, welche im Haushalt zu erledigen sind.",
+      "color": "#a733e6",
+      "reminderTime": 4
+    },
+    {
+      "id": "3fec5746-499e-4541-87bf-820b30fa0c13",
+      "name": "Schule",
+      "description": "Aufgaben für die Schule. Prüfungen, Hausaufgaben, usw.",
+      "color": "#ff0000",
+      "reminderTime": 4
+    },
+    {
+      "id": "6b1c9a5d-541b-46fe-ae3c-b4e13ecd2512",
+      "name": "Wichtig",
+      "description": "Wichtige Aufgaben, die dringend erledigt werden müssen.",
+      "color": "#000000",
+      "reminderTime": 30
+    }
+  ],
+  "todos": [
+    {
+      "id": "fa56d1eb-3c29-46b9-b47c-f660e902ba2b",
+      "type": "55c6c54a-a761-46ad-bf52-e8749c78744d",
+      "title": "Geschenke kaufen",
+      "description": "Dennis hat bald Geburtstag. Für ihn muss noch ein Geschenk organisiert werden.",
+      "dueDate": "2024-01-08T17:59:58Z",
+      "completed": true,
+      "assignees": [
+        "3b03aea8-7821-4cb1-b21d-9fe7ae66e8ee",
+        "9ec928e1-8e15-4c47-8d8b-0ea6d45cbfd4",
+        "c3829870-d8f2-4612-84db-ea6fc685bcbe",
+        "d1571f5c-9e8e-4858-815b-71eec47ae5c7",
+        "dd518f3b-e282-417d-9bd3-7ad6470f3606"
+      ]
+    },
+    {
+      "id": "a2c6c36b-829c-4fb8-b259-546d1702e67a",
+      "type": "3fec5746-499e-4541-87bf-820b30fa0c13",
+      "title": "Hausaufgaben Deutsch lösen",
+      "description": "Die Hausaufgaben für das Fach Deutsch müssen erledigt werden.",
+      "dueDate": "2024-01-08T18:01:26Z",
+      "completed": true,
+      "assignees": [
+        "3b03aea8-7821-4cb1-b21d-9fe7ae66e8ee",
+        "dd518f3b-e282-417d-9bd3-7ad6470f3606"
+      ]
+    },
+    {
+      "id": "103dacdb-8adc-4aef-8bc3-9b318b66defd",
+      "type": "3fec5746-499e-4541-87bf-820b30fa0c13",
+      "title": "Aufgaben für die Applikation ausdenken",
+      "description": "Es sollen noch weiter Aufgaben für die Applikation erfunden werden, damit es so aussieht, als ob jemand diese Applikation verwendet hat.",
+      "dueDate": "2024-01-08T18:02:57Z",
+      "completed": true,
+      "assignees": [
+        "0052c4ad-e423-49a3-a9ec-971f84f785b3",
+        "3b03aea8-7821-4cb1-b21d-9fe7ae66e8ee",
+        "9ec928e1-8e15-4c47-8d8b-0ea6d45cbfd4",
+        "c3829870-d8f2-4612-84db-ea6fc685bcbe",
+        "d1571f5c-9e8e-4858-815b-71eec47ae5c7",
+        "dd518f3b-e282-417d-9bd3-7ad6470f3606"
+      ]
+    },
+    {
+      "id": "7f8b22ae-c619-409f-9516-ff3b4f1e96ee",
+      "type": "d5b22115-b22d-4a22-aa6c-b0bd7071f32c",
+      "title": "Druckerpapier nachfüllen",
+      "description": "Der Drucker im Erdgeschoss hat einen niedrigen Papierstand.",
+      "dueDate": "2024-01-26T17:59:00Z",
+      "completed": true,
+      "assignees": [
+        "3b03aea8-7821-4cb1-b21d-9fe7ae66e8ee"
+      ]
+    },
+    {
+      "id": "9d042329-1ee8-4ddc-aca7-31d845078e90",
+      "type": "dfb6a3c6-80db-4c10-8227-4d63cc1755f6",
+      "title": "Laub entsorgen",
+      "description": "Das zusammengekehrte Laub muss auf den Kompost gebracht werden.",
+      "dueDate": "2024-01-04T17:53:00Z",
+      "completed": false,
+      "assignees": [
+        "c3829870-d8f2-4612-84db-ea6fc685bcbe"
+      ]
+    },
+    {
+      "id": "9665e6c8-fddc-4165-b11d-915f2a23d4c0",
+      "type": "d5b22115-b22d-4a22-aa6c-b0bd7071f32c",
+      "title": "Herr Maier zurückrufen",
+      "description": "Herr Maier hat am Dienstag angerufen.\n\nEr möchte mehr Informationen zum Schlossberg Projekt.",
+      "dueDate": "2024-01-08T17:52:08Z",
+      "completed": false,
+      "assignees": [
+        "0052c4ad-e423-49a3-a9ec-971f84f785b3"
+      ]
+    },
+    {
+      "id": "36373cc4-4eca-447a-b8a8-ebd7c6f302a8",
+      "type": "6b1c9a5d-541b-46fe-ae3c-b4e13ecd2512",
+      "title": "Steuerunterlagen zusammentragen",
+      "description": "Bald ist wieder zeit für die Steuererklärung. Dafür müssen alle Unterlagen zusammengetragen werden.",
+      "dueDate": "2024-01-08T17:58:48Z",
+      "completed": false,
+      "assignees": [
+        "9ec928e1-8e15-4c47-8d8b-0ea6d45cbfd4",
+        "dd518f3b-e282-417d-9bd3-7ad6470f3606"
+      ]
+    },
+    {
+      "id": "398112b3-2cd4-4035-b290-b58f0dd7e719",
+      "type": "55c6c54a-a761-46ad-bf52-e8749c78744d",
+      "title": "Fahrrad putzen",
+      "description": "Nach dem letzen Ausflug ist das Fahrrad dreckig. Bitte putzen.",
+      "dueDate": "2024-01-08T18:02:21Z",
+      "completed": false,
+      "assignees": [
+        "c3829870-d8f2-4612-84db-ea6fc685bcbe",
+        "d1571f5c-9e8e-4858-815b-71eec47ae5c7"
+      ]
+    },
+    {
+      "id": "0d73ab27-de09-4937-8b93-70e03c65c91a",
+      "type": "55c6c54a-a761-46ad-bf52-e8749c78744d",
+      "title": "Tickets Zoo kaufen",
+      "description": "In zwei Wochen gehen wir mit der Familie in den Zoo. Dafür müssen wir noch Tickets kaufen",
+      "dueDate": "2024-02-01T17:53:00Z",
+      "completed": false,
+      "assignees": [
+        "9ec928e1-8e15-4c47-8d8b-0ea6d45cbfd4",
+        "d1571f5c-9e8e-4858-815b-71eec47ae5c7"
+      ]
+    },
+    {
+      "id": "7611c99c-894a-4bfc-b992-d2cc0380c80a",
+      "type": "3fec5746-499e-4541-87bf-820b30fa0c13",
+      "title": "Mathe lernen",
+      "description": "Für die bevorstehende Matheprüfung muss noch ordentlich gebüffelt werden.",
+      "dueDate": "2024-03-02T17:54:00Z",
+      "completed": false,
+      "assignees": [
+        "0052c4ad-e423-49a3-a9ec-971f84f785b3",
+        "3b03aea8-7821-4cb1-b21d-9fe7ae66e8ee"
+      ]
+    }
+  ],
+  "users": [
+    {
+      "id": "c3829870-d8f2-4612-84db-ea6fc685bcbe",
+      "firstName": "Andy",
+      "lastName": "Ausprobier",
+      "email": "andy.ausprobier@example.com"
+    },
+    {
+      "id": "3b03aea8-7821-4cb1-b21d-9fe7ae66e8ee",
+      "firstName": "Benny",
+      "lastName": "Beispiel",
+      "email": "benny.beispiel@example.com"
+    },
+    {
+      "id": "d1571f5c-9e8e-4858-815b-71eec47ae5c7",
+      "firstName": "Céline",
+      "lastName": "Checker",
+      "email": "celine.checker@example.com"
+    },
+    {
+      "id": "0052c4ad-e423-49a3-a9ec-971f84f785b3",
+      "firstName": "Dennis",
+      "lastName": "Demo",
+      "email": "dennis.demo@example.com"
+    },
+    {
+      "id": "9ec928e1-8e15-4c47-8d8b-0ea6d45cbfd4",
+      "firstName": "Marcel",
+      "lastName": "Model",
+      "email": "marcel.model@example.com"
+    },
+    {
+      "id": "dd518f3b-e282-417d-9bd3-7ad6470f3606",
+      "firstName": "Tina",
+      "lastName": "Tester",
+      "email": "tina.tester@example.com"
+    }
+  ]
+}
