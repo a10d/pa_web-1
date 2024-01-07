@@ -7,7 +7,7 @@ Für die zugewiesenen Personen sowie die verschiedenen Aufgabentypen können in 
 
 Docker muss auf dem System installiert sein. Das Projekt kann mit dem Befehl `docker compose up -d` gestartet werden. Beim ersten Start werden beide Images erstellt. Dieser Prozess kann einige Sekunden in Anspruch nehmen.
 
-Nach dem Start ist die Applikation unter https://localhost:5173/ erreichbar.
+Nach dem Start ist die Applikation unter http://localhost:5173/ erreichbar.
 
 ### Anpassen der Ports
 
