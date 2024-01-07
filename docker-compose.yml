@@ -16,7 +16,12 @@ services:
     image: a10d/pa_web1_backend
     build:
       context: backend
+    volumes:
+      - backend-data:/app/data/
     ports:
       - "8080:8080"
     environment:
       - APP_INTERFACE=:8080
+
+volumes:
+  backend-data:
