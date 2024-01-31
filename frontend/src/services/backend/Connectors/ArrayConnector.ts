@@ -7,6 +7,8 @@ export class ArrayConnector implements Connector {
     protected todos: Todo[] = [];
     protected todoTypes: TodoType[] = [];
 
+    protected static IMPORT_VERSION = 2;
+
     constructor() {
         this.loadChanges();
     }
@@ -124,7 +126,7 @@ export class ArrayConnector implements Connector {
 
     createExport(): Promise<string> {
         return Promise.resolve(JSON.stringify({
-            version: 1,
+            version: ArrayConnector.IMPORT_VERSION,
             users: this.users,
             todos: this.todos,
             todoTypes: this.todoTypes,
@@ -140,7 +142,7 @@ export class ArrayConnector implements Connector {
                 todoTypes: TodoType[]
             }>;
 
-            if (imported.version !== 1) {
+            if (imported.version !== ArrayConnector.IMPORT_VERSION) {
                 return Promise.reject(new Error("Invalid import signature"));
             }
 
